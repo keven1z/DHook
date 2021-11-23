@@ -53,3 +53,8 @@ com/keven1z/Test,test3,(Z)Z,true
 运行`java -javaagent:agent -jar test.jar`.运行结果如下：
 
 ![image-20211123135028361](https://typora-1253484559.cos.ap-shanghai.myqcloud.com/img/image-20211123135028361.png)
+
+## 目前支持的配置方式
+* 支持hook接口，当填写的类为接口时，默认会hook所有实现的子类
+* 支持更改hook类的返回类型为string，int，boolean的返回值
+* 支持打印hook方法的所有参数值
