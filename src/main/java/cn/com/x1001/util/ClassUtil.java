@@ -1,14 +1,13 @@
 package cn.com.x1001.util;
 
+import cn.com.x1001.Agent;
 import cn.com.x1001.bean.HookTmp;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.objectweb.asm.Opcodes;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +36,12 @@ public class ClassUtil {
         Iterable<CSVRecord> records = CSVFormat.EXCEL.withFirstRecordAsHeader().parse(in);
         HashSet<HookTmp> hookTmps = new HashSet<>();
         for (CSVRecord record : records) {
-            buildHookTmp(record, hookTmps);
+            try{
+                buildHookTmp(record, hookTmps);
+            }
+            catch (IllegalArgumentException e){
+                Agent.out.println("导入hook错误："+e.getMessage());
+            }
         }
         return hookTmps;
     }
@@ -58,7 +62,29 @@ public class ClassUtil {
         hookTmps.add(hookTmp);
     }
 
-    public static void recordHookResult(){
+    public static void writeFiles(String fileName, byte[] data) throws Exception {
+        File directory = new File(".");
+        String canonicalPath = directory.getCanonicalPath();
+        System.out.println(fileName+"导出文件路径："+canonicalPath);
+        FileOutputStream fso = new FileOutputStream(canonicalPath + File.separator + fileName);
+        fso.write(data);
+        fso.close();
+    }
+    public static void exportClass(byte[] classfileBuffer,String className){
+        String[] split = className.split("/");
+        String realClassName = split[split.length-1];
+        byte[] classfile = classfileBuffer;
+        try {
+            classfile = DecompilerUtil.getClassString(classfileBuffer, className).getBytes(StandardCharsets.UTF_8);
+            realClassName = realClassName + ".java";
+        } catch (Throwable e) {
+            realClassName = realClassName + ".class";
+        }
 
+        try {
+            writeFiles(realClassName,classfile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

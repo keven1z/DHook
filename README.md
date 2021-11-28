@@ -1,4 +1,4 @@
-# DHook ![1.0 (shields.io)](https://img.shields.io/badge/1.0-brightgreen.svg)
+# DHook ![1.0 (shields.io)](https://img.shields.io/badge/1.1-brightgreen.svg)
 DHook是一个自定义动态hook的工具。通过`javaagent`+`ASM`技术对运行时的java应用进行字节码修改，并可以配置文件的方式来增加hook点，修改执行方法的返回值等。
 
 ## 兼容性
@@ -48,13 +48,20 @@ com/keven1z/Test,test2,(I)I,111
 com/keven1z/Test,test3,(Z)Z,true
 ```
 
-该配置文件由className,method,desc,return组成，分别为类名，方法名，方法的描述符，以及返回值组成。
+该配置文件由className,method,desc,return组成，分别为类名，方法名，方法的描述符，以及返回值组成,配置文件路径固定为运行应用的当前路径。
 
 运行`java -javaagent:agent -jar test.jar`.运行结果如下：
 
 ![image-20211123135028361](https://typora-1253484559.cos.ap-shanghai.myqcloud.com/img/image-20211123135028361.png)
 
-## 目前支持的配置方式
+## 更新
+### 1.0版本
 * 支持hook接口，当填写的类为接口时，默认会hook所有实现的子类
 * 支持更改hook类的返回类型为string，int，boolean的返回值
 * 支持打印hook方法的所有参数值
+
+### 1.1版本
+* 增加通过`*`打印该类的所有方法
+* 支持打印返回值
+* 支持反编译代码,将hook代码生成文件写入当前目录
+* 支持修改参数

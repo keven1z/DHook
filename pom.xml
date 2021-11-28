@@ -25,9 +25,42 @@
             <artifactId>commons-csv</artifactId>
             <version>1.9.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-core</artifactId>
+            <version>0.5.36</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-expressions</artifactId>
+            <version>0.5.36</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-reflection</artifactId>
+            <version>0.5.36</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-compilertools</artifactId>
+            <version>0.5.36</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.sorcerer</groupId>
+            <artifactId>sorcerer-javac</artifactId>
+            <version>0.8</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
     </dependencies>
     <build>
-        <finalName>agent</finalName>
+        <finalName>dHook</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -49,25 +82,27 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <includes>
-                                <include>cn/com/x1001/**</include>
-                                <include>org/objectweb/**</include>
-                                <include>org/apache/**</include>
-                                <include>META-INF/MANIFEST.MF</include>
-                            </includes>
-                        </filter>
-                    </filters>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.objectweb</pattern>
-                            <shadedPattern>cn.com.x1001.thirdparty.org.objectweb</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
+<!--                <configuration>-->
+<!--                    <filters>-->
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <includes>-->
+<!--                                <include>cn/com/x1001/**</include>-->
+<!--                                <include>org/objectweb/**</include>-->
+<!--                                <include>org/apache/**</include>-->
+<!--                                <include>javax/xml/**</include>-->
+<!--                                <include>org/bitbucket/mstrobel</include>-->
+<!--                                <include>META-INF/MANIFEST.MF</include>-->
+<!--                            </includes>-->
+<!--                        </filter>-->
+<!--                    </filters>-->
+<!--                    <relocations>-->
+<!--                        <relocation>-->
+<!--                            <pattern>org.objectweb</pattern>-->
+<!--                            <shadedPattern>cn.com.x1001.thirdparty.org.objectweb</shadedPattern>-->
+<!--                        </relocation>-->
+<!--                    </relocations>-->
+<!--                </configuration>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -94,17 +129,6 @@
                             <Build-Time>${maven.build.timestamp}</Build-Time>
                         </manifestEntries>
                     </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <skip>true</skip>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <argLine>
-                        -javaagent:${project.build.directory}/${build.finalName}.jar
-                    </argLine>
                 </configuration>
             </plugin>
         </plugins>

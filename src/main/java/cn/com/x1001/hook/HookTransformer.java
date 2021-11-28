@@ -6,6 +6,8 @@ import cn.com.x1001.InstrumentationContext;
 import cn.com.x1001.classmap.ClassInfo;
 import cn.com.x1001.classmap.HookGraph;
 import cn.com.x1001.util.ClassUtil;
+import cn.com.x1001.util.DecompilerUtil;
+import com.strobel.decompiler.Decompiler;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
@@ -25,9 +27,6 @@ public class HookTransformer implements ClassFileTransformer {
         if (null == className) {
             return classfileBuffer;
         }
-//        if (!className.toLowerCase().contains("user")) {
-//            return classfileBuffer;
-//        }
 //        System.out.println(className);
         ClassReader classReader = new ClassReader(classfileBuffer);
         if (!context.isHookClass(className)) {
@@ -51,6 +50,11 @@ public class HookTransformer implements ClassFileTransformer {
         }
 
         HookGraph classMap = context.getClassMap();
+        ClassInfo classInfo = classMap.getVertex(className);
+        if (classInfo.getActions().contains(HookConsts.ACTION_GET_DECOMPILER)){
+            ClassUtil.exportClass(classfileBuffer,className);
+        }
+
         ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES| ClassWriter.COMPUTE_MAXS);
         CodeClassVisitor codeClassVisitor = new CodeClassVisitor(classWriter, classMap.getVertex(className));
         classReader.accept(codeClassVisitor, ClassReader.EXPAND_FRAMES);
@@ -83,8 +87,8 @@ public class HookTransformer implements ClassFileTransformer {
     }
 
     /**
-     * @param superName  当前hook类的父类
-     * @param interfaces 当前hook类的接口类
+     * @param superName  当前类的父类
+     * @param interfaces 当前类的接口类
      */
     private HashSet<String> buildAncestors(String superName, String[] interfaces) {
 
@@ -97,6 +101,5 @@ public class HookTransformer implements ClassFileTransformer {
         }
         return ancestors;
     }
-
 
 }

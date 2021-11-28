@@ -13,7 +13,7 @@
         </includes>
       </resource>
     </resources>
-    <finalName>agent</finalName>
+    <finalName>dHook</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -26,25 +26,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <filters>
-            <filter>
-              <artifact>*:*</artifact>
-              <includes>
-                <include>cn/com/x1001/**</include>
-                <include>org/objectweb/**</include>
-                <include>org/apache/**</include>
-                <include>META-INF/MANIFEST.MF</include>
-              </includes>
-            </filter>
-          </filters>
-          <relocations>
-            <relocation>
-              <pattern>org.objectweb</pattern>
-              <shadedPattern>cn.com.x1001.thirdparty.org.objectweb</shadedPattern>
-            </relocation>
-          </relocations>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -69,15 +50,6 @@
               <Build-Time>${maven.build.timestamp}</Build-Time>
             </manifestEntries>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.9</version>
-        <configuration>
-          <skip>true</skip>
-          <redirectTestOutputToFile>true</redirectTestOutputToFile>
-          <argLine>-javaagent:${project.build.directory}/${build.finalName}.jar</argLine>
         </configuration>
       </plugin>
     </plugins>

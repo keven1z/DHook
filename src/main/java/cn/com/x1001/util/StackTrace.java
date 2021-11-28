@@ -1,0 +1,87 @@
+/*
+ * Copyright 2017-2021 Baidu Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package cn.com.x1001.util;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Created by tyy on 3/28/17.
+ * 获取栈信息工具类
+ */
+public class StackTrace {
+
+    /**
+     * 获取栈信息
+     *
+     * @return 栈信息
+     */
+    public static String getStackTrace() {
+
+        Throwable throwable = new Throwable();
+        StackTraceElement[] stackTraceElements = throwable.getStackTrace();
+        StringBuilder retStack = new StringBuilder();
+
+        //此处前几个调用栈都是插件中产生的所以跳过，只显示客户自己的调用栈
+        if (stackTraceElements.length >= 3) {
+            for (int i = 2; i < stackTraceElements.length; i++) {
+                retStack.append(stackTraceElements[i].getClassName() + "@" + stackTraceElements[i].getMethodName()
+                        + "(" + stackTraceElements[i].getLineNumber() + ")" + "\r\n");
+            }
+        } else {
+            for (int i = 0; i < stackTraceElements.length; i++) {
+                retStack.append(stackTraceElements[i].getClassName() + "@" + stackTraceElements[i].getMethodName()
+                        + "(" + stackTraceElements[i].getLineNumber() + ")" + "\r\n");
+            }
+        }
+
+        return retStack.toString();
+    }
+
+    /**
+     * 获取原始栈
+     *
+     * @return 原始栈
+     */
+    public static List<String> getStackTraceArray(boolean isFilter, boolean hasLineNumber) {
+        LinkedList<String> stackTrace = new LinkedList<String>();
+        Throwable throwable = new Throwable();
+        StackTraceElement[] stack = throwable.getStackTrace();
+        if (stack != null) {
+            for (int i = 0; i < stack.length; i++) {
+                if (hasLineNumber) {
+                    stackTrace.add(stack[i].toString());
+                } else {
+                    stackTrace.add(stack[i].getClassName() + "." + stack[i].getMethodName());
+                }
+            }
+        }
+
+        return stackTrace;
+    }
+
+    /**
+     * hook 点参数获取原始栈
+     *
+     * @return 原始栈
+     */
+    public static List<String> getParamStackTraceArray() {
+        return getStackTraceArray(true, false);
+    }
+
+
+
+}

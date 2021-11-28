@@ -16,8 +16,8 @@ public class ClassInfo {
     private String className;
     private int access = -1;
     private boolean isHooked = false;
-
     private Set<MethodDesc> methodDesc = new HashSet<>();
+    private Set<Integer> actions = new HashSet<>();
 
     public String getClassName() {
         return className;
@@ -43,6 +43,24 @@ public class ClassInfo {
         this.methodDesc.addAll(methodDesc);
     }
 
+    public void setActions(Set<Integer> actions) {
+        this.actions.addAll(actions);
+    }
+
+    public Set<Integer> getActions() {
+        return actions;
+    }
+
+    public MethodDesc getMethodDesc(String method, String desc) {
+        Set<MethodDesc> methodDesc = getMethodDesc();
+        for (MethodDesc md : methodDesc) {
+            if (md.getMethod().equals(method) && md.getDesc().equals(desc)) {
+                return md;
+            }
+        }
+        return null;
+    }
+
     public Set<String> getMethods() {
         HashSet<String> methods = new HashSet<>();
         for (MethodDesc md : methodDesc) {
@@ -60,7 +78,8 @@ public class ClassInfo {
         }
         return descs;
     }
-    public String getReturnValue(String method,String desc) {
+
+    public String getReturnValue(String method, String desc) {
         if (method == null || desc == null) return null;
         for (MethodDesc md : methodDesc) {
             if (md.getMethod().equals(method) && md.getDesc().equals(desc)) {
@@ -124,6 +143,7 @@ public class ClassInfo {
         private String method;
         private String desc;
         private String returnValue;
+        private HashMap<Integer, String> parameters = new HashMap<>();
 
         public MethodDesc(String method, String desc) {
             this.method = method;
@@ -134,6 +154,14 @@ public class ClassInfo {
             this.method = method;
             this.desc = desc;
             this.returnValue = returnValue;
+        }
+
+        public void addParameter(int pos, String value) {
+            this.parameters.put(pos, value);
+        }
+
+        public HashMap<Integer, String> getParameters() {
+            return parameters;
         }
 
         public String getReturnValue() {
