@@ -10,6 +10,8 @@ public class HookConsts {
     public static final String CSV_METHOD  = "method";
     public static final String CSV_DESC  = "desc";
     public static final String CSV_RETURN  = "return";
+    public static final String CSV_PARAMETER  = "parameter";
+
 
     public static final String FLAG_ACTION_GET_DECOMPILER = "+";
     public static final int ACTION_GET_DECOMPILER = 1;

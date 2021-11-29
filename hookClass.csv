@@ -1,5 +1,5 @@
 className,method,desc,return,parameter,
-com/keven1z/Test,test1,(Ljava/lang/String;)Ljava/lang/String;,keven1z
-com/keven1z/Test,test2,(I)I,111
-com/keven1z/Test,test3,(Z)Z,true
-com/keven1z/Test,*,*
+com/keven1z/Test,test1,(Ljava/lang/String;)Ljava/lang/String;,keven1z,
+com/keven1z/Test,test2,(I)I,111,
+com/keven1z/Test,test3,(Z)Z,true,
+com/keven1z/Test,test4,(Ljava/lang/String;I)Ljava/lang/String;,,0-keven1z;1-777

@@ -1,7 +1,7 @@
 package cn.com.x1001.watch;
 
 import cn.com.x1001.Agent;
-import cn.com.x1001.classmap.ClassInfo;
+import cn.com.x1001.classmap.HookClass;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
@@ -19,11 +19,11 @@ public class HookWatch extends Thread {
     @Override
     public void run() {
         while (true) {
-            Set<ClassInfo> classHashSet = Agent.context.getClassHashSet();
-            for (ClassInfo classInfo:classHashSet){
-                if (classInfo.isHooked()) continue;
+            Set<HookClass> classHashSet = Agent.context.getClassHashSet();
+            for (HookClass hookClass :classHashSet){
+                if (hookClass.isHooked()) continue;
                 try {
-                    reTransformClass(classInfo.getClassName());
+                    reTransformClass(hookClass.getClassName());
                 } catch (UnmodifiableClassException e) {
                     System.out.println("transform class error:"+e.getMessage());
                 }

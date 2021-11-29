@@ -1,6 +1,5 @@
 package cn.com.x1001.classmap;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -23,7 +22,7 @@ public class GraphNode {
      * 顶点信息
      * @since 0.0.2
      */
-    private ClassInfo classInfo;
+    private ClassVertex classVertex;
 
     /**
      * 以此顶点为起点的边的集合，是一个列表，列表的每一项是一条边
@@ -36,8 +35,8 @@ public class GraphNode {
      * 初始化一個節點
      * @param vertex 頂點
      */
-    public GraphNode(ClassInfo vertex) {
-        this.classInfo = vertex;
+    public GraphNode(ClassVertex vertex) {
+        this.classVertex = vertex;
         this.edgeSet = new HashSet<>();
     }
 
@@ -55,9 +54,9 @@ public class GraphNode {
      * @return 边
      * @since 0.0.2
      */
-    public Edge get(final ClassInfo to) {
+    public Edge get(final ClassVertex to) {
         for(Edge edge : edgeSet) {
-            ClassInfo dest = edge.getTo();
+            ClassVertex dest = edge.getTo();
 
             if(dest.equals(to)) {
                 return edge;
@@ -71,7 +70,7 @@ public class GraphNode {
      * @param to 目标边
      * @since 0.0.2
      */
-    public void remove(final ClassInfo to) {
+    public void remove(final ClassVertex to) {
         Iterator<Edge> edgeIterable = edgeSet.iterator();
 
         while (edgeIterable.hasNext()) {
@@ -85,23 +84,23 @@ public class GraphNode {
 
     }
 
-    public ClassInfo getVertex() {
-        return classInfo;
+    public ClassVertex getVertex() {
+        return classVertex;
     }
 
     public Set<Edge> getEdgeSet() {
         return edgeSet;
     }
 
-    public Set<ClassInfo> getToClassInfo(){
-        HashSet<ClassInfo> classInfos = new HashSet<>();
+    public Set<ClassVertex> getToClassInfo(){
+        HashSet<ClassVertex> hookClasses = new HashSet<>();
         for(Edge edge:this.getEdgeSet()){
-                ClassInfo from = edge.getFrom();
-                if(from.equals(classInfo)){
-                    classInfos.add(edge.getTo());
+            ClassVertex from = edge.getFrom();
+                if(from.equals(classVertex)){
+                    hookClasses.add(edge.getTo());
                 }
         }
-        return classInfos;
+        return hookClasses;
     }
 
     @Override
@@ -109,12 +108,7 @@ public class GraphNode {
         return this.getVertex().toString();
     }
 
-    /**
-     * 设置已经hook该类
-     */
-    public void hooked(){
-        this.classInfo.setHooked(true);
-    }
+
 
 
 }

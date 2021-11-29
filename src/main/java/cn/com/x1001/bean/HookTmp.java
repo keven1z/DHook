@@ -16,28 +16,46 @@ public class HookTmp {
     private String desc;
     private String returnValue;
     private Set<Integer> actions = new HashSet<>();
-    private HashMap<Integer,String> parameters = new HashMap<>();
+    private HashMap<Integer, String> parameters = new HashMap<>();
 
-    public HookTmp(String className, String method, String desc) {
+    public HookTmp(String className, String method, String desc, String parameter) {
         this.className = parseAction(className);
         this.method = method;
         this.desc = desc;
+        this.parameters = parseParameter(parameter);
     }
 
     private String parseAction(String className) {
-        if (className.startsWith(HookConsts.FLAG_ACTION_GET_DECOMPILER)){
+        if (className.startsWith(HookConsts.FLAG_ACTION_GET_DECOMPILER)) {
             setActions(HookConsts.ACTION_GET_DECOMPILER);
-            return className.replace(HookConsts.FLAG_ACTION_GET_DECOMPILER,"");
+            return className.replace(HookConsts.FLAG_ACTION_GET_DECOMPILER, "");
         }
         return className;
+    }
+
+    private HashMap<Integer, String> parseParameter(String parameter) {
+        HashMap<Integer, String> hashMap = new HashMap<>();
+        if (parameter == null) return hashMap;
+
+        String[] parameterArr = parameter.split(";");
+        for (String p : parameterArr) {
+            String[] pv = p.split("-");
+            if (pv.length != 2) continue;
+            int pos = Integer.parseInt(pv[0]);
+            String value = pv[1];
+            hashMap.put(pos, value);
+        }
+        return hashMap;
     }
 
     public Set<Integer> getActions() {
         return actions;
     }
-    public void addParameter(int pos, String value) {
-        this.parameters.put(pos, value);
+
+    public HashMap<Integer, String> getParameters() {
+        return parameters;
     }
+
     public void setActions(Set<Integer> actions) {
         this.actions.addAll(actions);
     }
@@ -82,6 +100,6 @@ public class HookTmp {
     public String toString() {
         return "ClassName='" + className + '\'' +
                 ", method='" + method + '\'' +
-                ", desc='" + desc ;
+                ", desc='" + desc;
     }
 }

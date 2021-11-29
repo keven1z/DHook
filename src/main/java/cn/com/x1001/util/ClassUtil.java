@@ -56,8 +56,9 @@ public class ClassUtil {
         String method = record.get(CSV_METHOD);
         String desc = record.get(CSV_DESC);
         String returnValue = record.get(CSV_RETURN);
+        String parameter = record.get(CSV_PARAMETER);
         if (className == null || method == null) return;
-        HookTmp hookTmp = new HookTmp(className, method, desc);
+        HookTmp hookTmp = new HookTmp(className, method, desc,parameter);
         hookTmp.setReturnValue(returnValue);
         hookTmps.add(hookTmp);
     }

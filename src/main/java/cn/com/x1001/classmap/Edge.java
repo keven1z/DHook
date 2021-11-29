@@ -13,13 +13,13 @@ public class Edge {
      * 开始节点
      * @since 0.0.2
      */
-    private ClassInfo from;
+    private ClassVertex from;
 
     /**
      * 结束节点
      * @since 0.0.2
      */
-    private ClassInfo to;
+    private ClassVertex to;
 
     /**
      * 权重
@@ -27,24 +27,24 @@ public class Edge {
      */
     private double weight;
 
-    public Edge(ClassInfo from, ClassInfo to) {
+    public Edge(ClassVertex from, ClassVertex to) {
         this.from = from;
         this.to = to;
     }
 
-    public ClassInfo getFrom() {
+    public ClassVertex getFrom() {
         return from;
     }
 
-    public void setFrom(ClassInfo from) {
+    public void setFrom(ClassVertex from) {
         this.from = from;
     }
 
-    public ClassInfo getTo() {
+    public ClassVertex getTo() {
         return to;
     }
 
-    public void setTo(ClassInfo to) {
+    public void setTo(ClassVertex to) {
         this.to = to;
     }
 

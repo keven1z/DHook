@@ -25,31 +25,19 @@ public class HookGraph {
         this.nodeSet = Collections.synchronizedSet(new LinkedHashSet<>());
     }
 
-    public void addNode(ClassInfo classInfo) {
-        GraphNode node = getNode(classInfo);
-        if (node != null){
-            node.getVertex().setMethodDesc(classInfo.getMethodDesc());
-            node.getVertex().setAccess(classInfo.getAccess());
-        }
-        else {
-            node = new GraphNode(classInfo);
-            this.nodeSet.add(node);
-        }
-        // 直接加入到集合中
 
-    }
-    public ClassInfo addNode(String className,int access) {
+    public ClassVertex addNode(String className, int access) {
         GraphNode node = this.getNode(className);
         if (node != null){
             return node.getVertex();
         }
-        ClassInfo classInfo = new ClassInfo();
-        classInfo.setClassName(className);
-        classInfo.setAccess(access);
-        node = new GraphNode(classInfo);
-        // 直接加入到集合中
+        ClassVertex classVertex = new ClassVertex();
+        classVertex.setClassName(className);
+        classVertex.setAccess(access);
+        node = new GraphNode(classVertex);
+        // 直接加入到节点集合中
         addNode(node);
-        return classInfo;
+        return classVertex;
     }
     public void addNode(GraphNode node) {
         // 直接加入到集合中
@@ -58,7 +46,7 @@ public class HookGraph {
     public int getNodeSize(){
         return this.nodeSet.size();
     }
-    public boolean removeVertex(ClassInfo v) {
+    public boolean removeVertex(HookClass v) {
         //1. 移除一个顶点
         //2. 所有和这个顶点关联的边也要被移除
         nodeSet.removeIf(graphNode -> v.equals(graphNode.getVertex()));
@@ -72,8 +60,8 @@ public class HookGraph {
         // 如果不存在，则直接报错即可。
 
         for (GraphNode graphNode : nodeSet) {
-            ClassInfo from = edge.getFrom();
-            ClassInfo originFrom = graphNode.getVertex();
+            ClassVertex from = edge.getFrom();
+            ClassVertex originFrom = graphNode.getVertex();
 
             // 起始节点在开头
             if (from.equals(originFrom)) {
@@ -103,7 +91,7 @@ public class HookGraph {
      */
     private GraphNode getNode(final Edge edge) {
         for (GraphNode node : nodeSet) {
-            final ClassInfo from = edge.getFrom();
+            final ClassVertex from = edge.getFrom();
 
             if (node.getVertex().equals(from)) {
                 return node;
@@ -120,7 +108,7 @@ public class HookGraph {
      * @return 图节点
      * @since 0.0.2
      */
-    public GraphNode getNode(ClassInfo vertex) {
+    public GraphNode getNode(HookClass vertex) {
         for (GraphNode node : nodeSet) {
             if (node.getVertex().equals(vertex)) {
                 return node;
@@ -136,7 +124,7 @@ public class HookGraph {
      */
     public GraphNode getNode(String className) {
         for (GraphNode node : nodeSet) {
-            ClassInfo vertex = node.getVertex();
+            ClassVertex vertex = node.getVertex();
             if (vertex != null) {
                 if (vertex.getClassName().equals(className)) return node;
             }
@@ -150,29 +138,37 @@ public class HookGraph {
      * @param className
      * @return
      */
-    public ClassInfo getVertex(String className) {
+    public ClassVertex getVertex(String className) {
 
         GraphNode nodeByClassName = getNode(className);
         if (nodeByClassName == null) return null;
         return nodeByClassName.getVertex();
     }
+    public ClassVertex buildVertex(String className,int access){
+        ClassVertex vertex = getVertex(className);
+        if (vertex == null){
+            vertex = new ClassVertex(className,access);
+            this.addNode(new GraphNode(vertex));
+        }
+        return vertex;
+    }
 
 
 
-    public HashSet<Edge> getToEdges(ClassInfo to) {
+    public HashSet<Edge> getToEdges(ClassVertex to) {
         HashSet<Edge> edges = new HashSet<>();
         for (Edge edge : this.getEdges()) {
-            ClassInfo dest = edge.getTo();
+            ClassVertex dest = edge.getTo();
             if (dest.equals(to)) {
                 edges.add(edge);
             }
         }
         return edges;
     }
-    public HashSet<Edge> getFromEdges(ClassInfo from) {
+    public HashSet<Edge> getFromEdges(ClassVertex from) {
         HashSet<Edge> edges = new HashSet<>();
         for (Edge edge : this.getEdges()) {
-            ClassInfo dest = edge.getFrom();
+            ClassVertex dest = edge.getFrom();
             if (dest.equals(from)) {
                 edges.add(edge);
             }
@@ -197,7 +193,7 @@ public class HookGraph {
         if (this.nodeSet != null) this.nodeSet.clear();
     }
 
-    public void addEdge(ClassInfo from, ClassInfo to) {
+    public void addEdge(ClassVertex from, ClassVertex to) {
         if (from == null || to == null) return;
         Edge classInfoEdge = new Edge(from, to);
         this.addEdge(classInfoEdge);

@@ -2,13 +2,16 @@ package cn.com.x1001.watch;
 
 import cn.com.x1001.Agent;
 import cn.com.x1001.bean.HookTmp;
-import cn.com.x1001.classmap.ClassInfo;
+import cn.com.x1001.classmap.HookClass;
 import cn.com.x1001.InstrumentationContext;
 import cn.com.x1001.hook.HookConsts;
 import cn.com.x1001.util.ClassUtil;
+import cn.com.x1001.util.HookUtil;
+import cn.com.x1001.util.Md5Util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -19,26 +22,27 @@ import java.util.Set;
  */
 public class ClassFileWatch extends Thread {
     private String canonicalPath;
+    private String fileName;
+    private static String last_file_md5 = "";
 
     public ClassFileWatch() throws IOException {
         File directory = new File(".");
         canonicalPath = directory.getCanonicalPath();
+        fileName = canonicalPath + File.separator + HookConsts.CSV_FILE_NAME;
+        readConfig();
+        Agent.out.println("配置文件读取路径：" + fileName);
+
     }
 
     @Override
     public void run() {
-        String fileName = canonicalPath + File.separator + HookConsts.CSV_FILE_NAME;
-        File file = new File(fileName);
-        Agent.out.println("文件路径：" + file.getAbsolutePath());
+        pause(10000);
         while (true) {
-            if (!file.exists()) {
-                pause(5000);
-                continue;
-            }
-            addHook(file);
+            readConfig();
             pause(3000);
         }
     }
+
 
     private void pause(long time) {
         try {
@@ -64,21 +68,10 @@ public class ClassFileWatch extends Thread {
         if (classInfos == null || classInfos.isEmpty()) return;
 
         for (HookTmp hookTmp : classInfos) {
-            if (hasHooked(hookTmp.getClassName(), hookTmp.getMethod(), hookTmp.getDesc())) {
-                continue;
-            }
             addToHookClass(hookTmp);
             Agent.out.println("load hook：" + hookTmp);
         }
 
-    }
-
-    private static boolean hasHooked(String className, String method, String desc) {
-        Set<ClassInfo> classHashSet = Agent.context.getClassHashSet();
-        for (ClassInfo hookClass : classHashSet) {
-            if (hookClass.exist(className, method, desc)) return true;
-        }
-        return false;
     }
 
     /**
@@ -89,18 +82,31 @@ public class ClassFileWatch extends Thread {
         String method = hookTmp.getMethod();
         String desc = hookTmp.getDesc();
         String returnValue = hookTmp.getReturnValue();
+        HashMap<Integer, String> parameters = hookTmp.getParameters();
         InstrumentationContext context = Agent.context;
-        ClassInfo classInfo;
-        if (context.isHookClass(className)) {
-            classInfo = context.getHookClass(className);
-            classInfo.setActions(hookTmp.getActions());
-            classInfo.setMethodDesc(method, desc, returnValue);
+        HookClass hookClass;
+        if (context.isHookClass(className, method, desc)) {
+            hookClass = context.getHookClass(className, method, desc);
         } else {
-            classInfo = new ClassInfo();
-            classInfo.setClassName(className);
-            classInfo.setMethodDesc(method, desc, returnValue);
-            classInfo.setActions(hookTmp.getActions());
-            context.addHook(classInfo);
+            hookClass = new HookClass();
+            hookClass.setClassName(className);
+            hookClass.setMethod(method);
+            hookClass.setDesc(desc);
+            context.addHook(hookClass);
         }
+        hookClass.setActions(hookTmp.getActions());
+        hookClass.setReturnValue(returnValue);
+        hookClass.setParameters(parameters);
+    }
+    public void readConfig(){
+
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return;
+        }
+        String configMd5 = Md5Util.getMD5(file);
+        if (!last_file_md5.equals(configMd5)) addHook(file);
+        last_file_md5 = configMd5;
+
     }
 }

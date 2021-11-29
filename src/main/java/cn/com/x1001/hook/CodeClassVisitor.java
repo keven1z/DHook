@@ -1,8 +1,8 @@
 package cn.com.x1001.hook;
 
 import cn.com.x1001.Agent;
-import cn.com.x1001.classmap.ClassInfo;
-import cn.com.x1001.hook.HookAdviceAdapter;
+import cn.com.x1001.classmap.HookClass;
+import cn.com.x1001.util.HookUtil;
 import org.objectweb.asm.*;
 
 import java.util.Set;
@@ -13,27 +13,30 @@ import java.util.Set;
  * @Description 类访问对象
  */
 public class CodeClassVisitor extends ClassVisitor {
-
-    private ClassInfo classInfo;
+    private String className;
+    private  Set<HookClass> hookClasses;
     Set<String> methods;
 
-    public CodeClassVisitor(ClassVisitor classVisitor, ClassInfo classInfo) {
+    public CodeClassVisitor(ClassVisitor classVisitor, String className) {
         super(Opcodes.ASM5, classVisitor);
-        this.classInfo = classInfo;
-        methods = classInfo.getMethods();
+        this.className = className;
+        this.hookClasses = Agent.context.getHookClasses(className);
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor localMethodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
         /*
-            如果method为*，则将所有方法打印出来
+            如果method为*，则将所有方法打印出来   w
          */
-        if (methods.contains(HookConsts.FLAG_PRINT_ALL_METHOD_AND_DESC)) {
-            Agent.out.println(classInfo.getClassName() + "." + name + desc);
+        if (HookUtil.isContainMethod(this.hookClasses,HookConsts.FLAG_PRINT_ALL_METHOD_AND_DESC)) {
+            Agent.out.println(this.className + "." + name + desc);
         }
-        if (methods.contains(name) && classInfo.getDescs(name).contains(desc))
-            return new HookAdviceAdapter(Opcodes.ASM5, localMethodVisitor, access, name, desc, classInfo);
+        if (HookUtil.isContainMethodDesc(hookClasses,name,desc)){
+            HookClass hookClass = Agent.context.getHookClass(hookClasses, name, desc);
+            return new HookAdviceAdapter(Opcodes.ASM5, localMethodVisitor, access, name, desc, hookClass);
+        }
+
         return localMethodVisitor;
     }
 

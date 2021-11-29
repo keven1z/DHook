@@ -3,11 +3,10 @@ package cn.com.x1001.hook;
 
 import cn.com.x1001.Agent;
 import cn.com.x1001.InstrumentationContext;
-import cn.com.x1001.classmap.ClassInfo;
+import cn.com.x1001.classmap.ClassVertex;
+import cn.com.x1001.classmap.HookClass;
 import cn.com.x1001.classmap.HookGraph;
 import cn.com.x1001.util.ClassUtil;
-import cn.com.x1001.util.DecompilerUtil;
-import com.strobel.decompiler.Decompiler;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
@@ -29,54 +28,47 @@ public class HookTransformer implements ClassFileTransformer {
         }
 //        System.out.println(className);
         ClassReader classReader = new ClassReader(classfileBuffer);
-        if (!context.isHookClass(className)) {
-            buildClassMap(classReader, className, null);
-            ClassInfo hookClasses = context.getSuperHookClasses(className);
-            if (hookClasses != null) {
-                context.addHooKClass(className, hookClasses);
-            }
+        buildClassMap(classReader, className);
 
+        if (!context.isHookClass(className)) {
+            ClassVertex superClassVertex = context.getSuperClasses(className);
+            if (superClassVertex != null) {
+                context.addHooKClass(className, superClassVertex.getClassName());
+            }
             return classfileBuffer;
         }
-        buildClassMap(classReader, className, context.getHookClass(className));
         context.setHooked(className);
         /* 如果为接口,添加所有实现该接口的第一个类为hook点*/
         if (ClassUtil.isInterface(classReader.getAccess())) {
-            Set<ClassInfo> childHookClasses = context.getChildHookClasses(className);
-            if (!childHookClasses.isEmpty()) {
-                context.addHooKClass(childHookClasses, context.getHookClass(className));
+            Set<ClassVertex> childClasses = context.getChildClasses(className);
+            if (!childClasses.isEmpty()) {
+                context.addHooKClass(className, childClasses);
             }
             return classfileBuffer;
         }
 
         HookGraph classMap = context.getClassMap();
-        ClassInfo classInfo = classMap.getVertex(className);
-        if (classInfo.getActions().contains(HookConsts.ACTION_GET_DECOMPILER)){
-            ClassUtil.exportClass(classfileBuffer,className);
+        if (context.containAction(className, HookConsts.ACTION_GET_DECOMPILER)) {
+            ClassUtil.exportClass(classfileBuffer, className);
         }
 
-        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES| ClassWriter.COMPUTE_MAXS);
-        CodeClassVisitor codeClassVisitor = new CodeClassVisitor(classWriter, classMap.getVertex(className));
+        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        CodeClassVisitor codeClassVisitor = new CodeClassVisitor(classWriter, className);
         classReader.accept(codeClassVisitor, ClassReader.EXPAND_FRAMES);
         return classWriter.toByteArray();
     }
 
-    private void buildClassMap(ClassReader classReader, String className, ClassInfo hookClass) {
+    private void buildClassMap(ClassReader classReader, String className) {
 //        long start = System.currentTimeMillis();
         HookGraph classMap = context.getClassMap();
         String[] interfaces = classReader.getInterfaces();
         String superName = classReader.getSuperName();
         HashSet<String> ancestors = buildAncestors(superName, interfaces);
-        if (hookClass == null) {
-            hookClass = classMap.addNode(className, classReader.getAccess());
-        } else {
-            hookClass.setAccess(classReader.getAccess());
-            classMap.addNode(hookClass);
-        }
+        ClassVertex classVertex = classMap.buildVertex(className, classReader.getAccess());
         for (String ancestorsClassName : ancestors) {
-            ClassInfo ancestorsClassInfo = classMap.addNode(ancestorsClassName, -1);
+            ClassVertex ancestorsVertex = classMap.addNode(ancestorsClassName, -1);
             /*將頂點關係加入節點*/
-            classMap.addEdge(hookClass, ancestorsClassInfo);
+            classMap.addEdge(classVertex, ancestorsVertex);
         }
 //        long l = System.currentTimeMillis() - start;
 //        if (l > 0) {

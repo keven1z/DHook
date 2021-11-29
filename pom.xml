@@ -25,6 +25,13 @@
             <artifactId>commons-csv</artifactId>
             <version>1.9.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -51,12 +58,6 @@
             <artifactId>procyon-compilertools</artifactId>
             <version>0.5.36</version>
         </dependency>
-        <dependency>
-            <groupId>org.jvnet.sorcerer</groupId>
-            <artifactId>sorcerer-javac</artifactId>
-            <version>0.8</version>
-        </dependency>
-        <!-- Thanks for using https://jar-download.com -->
 
     </dependencies>
     <build>

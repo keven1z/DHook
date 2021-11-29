@@ -1,21 +1,17 @@
 package cn.com.x1001;
 
-import cn.com.x1001.classmap.ClassInfo;
-import cn.com.x1001.classmap.Edge;
-import cn.com.x1001.classmap.GraphNode;
-import cn.com.x1001.classmap.HookGraph;
+import cn.com.x1001.classmap.*;
 import cn.com.x1001.util.ClassUtil;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * @author  keven1z
- * @Date  2021/6/17
+ * @author keven1z
+ * @Date 2021/6/17
  * @Description hook 的上下文信息
-*/
+ */
 public class InstrumentationContext {
 
     /**
@@ -23,18 +19,19 @@ public class InstrumentationContext {
      */
     private HookGraph classMap = new HookGraph();
     /*
-    * 存储hook的接口或类
-    */
-    private   Set<ClassInfo> hookClasses = new CopyOnWriteArraySet();
+     * 存储hook的接口或类
+     */
+    private CopyOnWriteArraySet<HookClass> hookClasses = new CopyOnWriteArraySet<>();
 
 
-    public Set<ClassInfo> getClassHashSet() {
+    public CopyOnWriteArraySet<HookClass> getClassHashSet() {
         return hookClasses;
     }
 
-    public void addHook(ClassInfo classInfo) {
-        this.getClassHashSet().add(classInfo);
+    public void addHook(HookClass hookClass) {
+        this.getClassHashSet().add(hookClass);
     }
+
     public HookGraph getClassMap() {
         return classMap;
     }
@@ -43,68 +40,136 @@ public class InstrumentationContext {
      * 是否为hook点
      */
     public boolean isHookClass(String className) {
-        for (ClassInfo hookClassInfo : getClassHashSet()) {
-            String hookClassName = hookClassInfo.getClassName();
+        for (HookClass hookHookClass : getClassHashSet()) {
+            String hookClassName = hookHookClass.getClassName();
             if (hookClassName.equals(className)) {
                 return true;
             }
         }
         return false;
     }
-    public void setHooked(String className){
-        GraphNode node = this.getClassMap().getNode(className);
-        node.hooked();
+
+    public boolean isHookClass(String className, String method, String desc) {
+        for (HookClass hookHookClass : getClassHashSet()) {
+            String hookClassName = hookHookClass.getClassName();
+            String m = hookHookClass.getMethod();
+            String d = hookHookClass.getDesc();
+            if (hookClassName.equals(className) && m.equals(method) && d.equals(desc)) {
+                return true;
+            }
+        }
+        return false;
     }
-    public ClassInfo getHookClass(String className) {
-        for (ClassInfo hookClassInfo : getClassHashSet()) {
-            String hookClassName = hookClassInfo.getClassName();
-            if (hookClassName.equals(className)) {
-                return hookClassInfo;
+
+    public HookClass getHookClass(Set<HookClass> hookClasses, String method, String desc) {
+
+        for (HookClass hookClass : hookClasses) {
+            String m = hookClass.getMethod();
+            String d = hookClass.getDesc();
+            if (m.equals(method) && d.equals(desc)) {
+                return hookClass;
             }
         }
         return null;
     }
-    public void addHooKClass(String className,ClassInfo hookClass){
-        ClassInfo vertex = getClassMap().getVertex(className);
-        vertex.setMethodDesc(hookClass.getMethodDesc());
-        getClassHashSet().add(vertex);
-    }
-    public void addHooKClass(Set<ClassInfo> classInfoHashSet,ClassInfo hookClass){
-        for (ClassInfo classInfo :classInfoHashSet){
-            classInfo.setMethodDesc(hookClass.getMethodDesc());
+
+    public HookClass getHookClass(String className, String method, String desc) {
+        Set<HookClass> hookClasses = getHookClasses(className);
+        for (HookClass hookClass : hookClasses) {
+            String m = hookClass.getMethod();
+            String d = hookClass.getDesc();
+            if (m.equals(method) && d.equals(desc)) {
+                return hookClass;
+            }
         }
-        getClassHashSet().addAll(classInfoHashSet);
+        return null;
     }
+
+    /**
+     * 設置已hook
+     */
+    public void setHooked(String className) {
+        Set<HookClass> hookClasses = getHookClasses(className);
+        for (HookClass hookClass : hookClasses) {
+            hookClass.setHooked(true);
+        }
+    }
+
+    public Set<HookClass> getHookClasses(String className) {
+        HashSet<HookClass> hashSet = new HashSet<>();
+        for (HookClass hookHookClass : getClassHashSet()) {
+            String hookClassName = hookHookClass.getClassName();
+            if (hookClassName.equals(className)) {
+                hashSet.add(hookHookClass);
+            }
+        }
+        return hashSet;
+    }
+
+    public boolean containAction(String className, int action) {
+        Set<HookClass> hookClasses = getHookClasses(className);
+        for (HookClass hookClass : hookClasses) {
+            Set<Integer> actions = hookClass.getActions();
+            if (actions.contains(action)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * 通过父类增加hook点
+     *
+     * @param className
+     * @param superClassName
+     */
+    public void addHooKClass(String className, String superClassName) {
+        Set<HookClass> superHookClasses = getHookClasses(superClassName);
+        for (HookClass hookClass : superHookClasses) {
+            HookClass hc = new HookClass(className, hookClass.getMethod(), hookClass.getDesc(), hookClass.getReturnValue(), hookClass.getParameters(), hookClass.getActions());
+            getClassHashSet().add(hc);
+        }
+    }
+
+    public void addHooKClass(String className, Set<ClassVertex> childClasses) {
+        Set<HookClass> hookClasses = getHookClasses(className);
+
+        for (HookClass hookClass : hookClasses) {
+            for (ClassVertex classVertex : childClasses) {
+                HookClass hc = new HookClass(classVertex.getClassName(), hookClass.getMethod(), hookClass.getDesc(), hookClass.getReturnValue(), hookClass.getParameters(), hookClass.getActions());
+                getClassHashSet().add(hc);
+            }
+        }
+    }
+
     /**
      * 判断该节点的父类是否在hook表中
+     *
      * @param className 待hook的className
      */
-    public Set<ClassInfo> getChildHookClasses(String className){
-        ClassInfo superClassInfo = getClassMap().getVertex(className);
-        HashSet<Edge> toEdges = getClassMap().getToEdges(superClassInfo);
-        HashSet<ClassInfo> classInfos = new HashSet<>();
-        for(Edge edge:toEdges){
-            ClassInfo from = edge.getFrom();
-            if (!ClassUtil.isInterface(from.getAccess())){
-                classInfos.add(from);
-            }
-            else classInfos.addAll(getChildHookClasses(from.getClassName()));
+    public Set<ClassVertex> getChildClasses(String className) {
+        ClassVertex vertex = classMap.getVertex(className);
+        HashSet<Edge> toEdges = getClassMap().getToEdges(vertex);
+        HashSet<ClassVertex> classVertices = new HashSet<>();
+        for (Edge edge : toEdges) {
+            ClassVertex from = edge.getFrom();
+            if (!ClassUtil.isInterface(from.getAccess())) {
+                classVertices.add(from);
+            } else classVertices.addAll(getChildClasses(from.getClassName()));
         }
-        return classInfos;
+        return classVertices;
     }
-    public ClassInfo getSuperHookClasses(String className){
-        ClassInfo classInfo = getClassMap().getVertex(className);
+
+    public ClassVertex getSuperClasses(String className) {
+        ClassVertex classVertex = getClassMap().getVertex(className);
         /*如果为接口则不加入hook点*/
-        if (ClassUtil.isInterface(classInfo.getAccess())){
+        if (ClassUtil.isInterface(classVertex.getAccess())) {
             return null;
         }
-        HashSet<Edge> fromEdges = getClassMap().getFromEdges(classInfo);
-        for(Edge edge:fromEdges){
-            ClassInfo to = edge.getTo();
-            if (isHookClass(to.getClassName())){
+        HashSet<Edge> fromEdges = getClassMap().getFromEdges(classVertex);
+        for (Edge edge : fromEdges) {
+            ClassVertex to = edge.getTo();
+            if (isHookClass(to.getClassName())) {
                 return to;
-            }
-            else getSuperHookClasses(to.getClassName());
+            } else getSuperClasses(to.getClassName());
         }
         return null;
     }
