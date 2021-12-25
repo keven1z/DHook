@@ -84,3 +84,16 @@ com/keven1z/Test,test3,(Z)Z,true,
 * 支持打印返回值
 * 支持反编译代码
 * 支持修改参数
+
+# 功能
+1. 心跳包
+2. 发送所有hook的class
+3. 发送hook成功的class
+4. 接收hook点
+   1. hook class
+   2. hook method
+   3. hook desc
+   4. return value
+   5. parameter
+   6. on method enter action
+   7. on method exit action

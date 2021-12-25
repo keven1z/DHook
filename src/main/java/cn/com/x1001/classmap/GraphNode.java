@@ -1,5 +1,6 @@
 package cn.com.x1001.classmap;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class GraphNode {
      */
     public GraphNode(ClassVertex vertex) {
         this.classVertex = vertex;
-        this.edgeSet = new HashSet<>();
+        this.edgeSet = Collections.synchronizedSet(new HashSet<>());
     }
 
     /**

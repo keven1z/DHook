@@ -10,6 +10,8 @@ import cn.com.x1001.util.ClassUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -26,7 +28,6 @@ public class HookTransformer implements ClassFileTransformer {
         if (null == className) {
             return classfileBuffer;
         }
-//        System.out.println(className);
         ClassReader classReader = new ClassReader(classfileBuffer);
         buildClassMap(classReader, className);
 
@@ -37,6 +38,7 @@ public class HookTransformer implements ClassFileTransformer {
             }
             return classfileBuffer;
         }
+
         context.setHooked(className);
         /* 如果为接口,添加所有实现该接口的第一个类为hook点*/
         if (ClassUtil.isInterface(classReader.getAccess())) {
@@ -47,7 +49,6 @@ public class HookTransformer implements ClassFileTransformer {
             return classfileBuffer;
         }
 
-        HookGraph classMap = context.getClassMap();
         if (context.containAction(className, HookConsts.ACTION_GET_DECOMPILER)) {
             ClassUtil.exportClass(classfileBuffer, className);
         }
@@ -65,7 +66,7 @@ public class HookTransformer implements ClassFileTransformer {
         String superName = classReader.getSuperName();
         HashSet<String> ancestors = buildAncestors(superName, interfaces);
         ClassVertex classVertex = classMap.buildVertex(className, classReader.getAccess());
-        for (String ancestorsClassName : ancestors) {
+        for (String ancestorsClassName : ancestors)  {
             ClassVertex ancestorsVertex = classMap.addNode(ancestorsClassName, -1);
             /*將頂點關係加入節點*/
             classMap.addEdge(classVertex, ancestorsVertex);

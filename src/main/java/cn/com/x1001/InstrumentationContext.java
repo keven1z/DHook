@@ -22,12 +22,17 @@ public class InstrumentationContext {
      * 存储hook的接口或类
      */
     private CopyOnWriteArraySet<HookClass> hookClasses = new CopyOnWriteArraySet<>();
-
+    private  String agentID;
 
     public CopyOnWriteArraySet<HookClass> getClassHashSet() {
         return hookClasses;
     }
-
+    public void register(String agentID){
+        this.agentID = agentID;
+    }
+    public String getAgentID(){
+        return this.agentID;
+    }
     public void addHook(HookClass hookClass) {
         this.getClassHashSet().add(hookClass);
     }

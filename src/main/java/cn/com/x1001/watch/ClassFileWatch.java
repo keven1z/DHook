@@ -5,13 +5,20 @@ import cn.com.x1001.bean.HookTmp;
 import cn.com.x1001.classmap.HookClass;
 import cn.com.x1001.InstrumentationContext;
 import cn.com.x1001.hook.HookConsts;
+import cn.com.x1001.http.HttpClient;
 import cn.com.x1001.util.ClassUtil;
+import cn.com.x1001.util.GsonUtil;
 import cn.com.x1001.util.HookUtil;
 import cn.com.x1001.util.Md5Util;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,19 +35,17 @@ public class ClassFileWatch extends Thread {
     public ClassFileWatch() throws IOException {
         File directory = new File(".");
         canonicalPath = directory.getCanonicalPath();
-        fileName = canonicalPath + File.separator + HookConsts.CSV_FILE_NAME;
-        readConfig();
+        fileName =canonicalPath + File.separator+HookConsts.CSV_FILE_NAME;
         Agent.out.println("配置文件读取路径：" + fileName);
 
     }
 
     @Override
     public void run() {
-        pause(10000);
-        while (true) {
-            readConfig();
+        do {
+            readHook();
             pause(3000);
-        }
+        } while (true);
     }
 
 
@@ -69,11 +74,22 @@ public class ClassFileWatch extends Thread {
 
         for (HookTmp hookTmp : classInfos) {
             addToHookClass(hookTmp);
-            Agent.out.println("load hook：" + hookTmp);
+            Agent.out.println("[+] load hook：" + hookTmp);
         }
 
     }
+    public void getHookByServer() throws IOException {
+        HttpResponse response = HttpClient.getHttpClient().getSyn(HookConsts.SERVER_HOOK);
+        if (response  == null || response.getStatusLine().getStatusCode() != 200) return;
+        HttpEntity entity = response.getEntity();
+        String content = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
+        List<HookTmp> hookTmps = GsonUtil.toList(content, HookTmp.class);
+        if (hookTmps.isEmpty()) return;
 
+        for (HookTmp hookTmp:hookTmps){
+            addToHookClass(hookTmp);
+        }
+    }
     /**
      * @param hookTmp hook class临时对象
      */
@@ -98,8 +114,7 @@ public class ClassFileWatch extends Thread {
         hookClass.setReturnValue(returnValue);
         hookClass.setParameters(parameters);
     }
-    public void readConfig(){
-
+    public void readHook(){
         File file = new File(fileName);
         if (!file.exists()) {
             return;

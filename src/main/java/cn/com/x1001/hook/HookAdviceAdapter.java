@@ -8,10 +8,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static cn.com.x1001.hook.HookConsts.*;
 
@@ -25,7 +22,7 @@ public class HookAdviceAdapter extends AdviceAdapter {
      * Creates a new {@link AdviceAdapter}.
      * @param api    the ASM API version implemented by this visitor. Must be one
      *               of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
-     * @param mv     the method visitor to which this adapter delegates calls.
+     * @param super     the method visitor to which this adapter delegates calls.
      * @param access the method's access flags (see {@link Opcodes}).
      * @param name   the method's name.
      * @param desc   the method's descriptor (see {@link Type Type}).
@@ -49,7 +46,106 @@ public class HookAdviceAdapter extends AdviceAdapter {
 
     @Override
     protected void onMethodEnter() {
+        String className = this.hookClass.getClassName();
+        super.visitVarInsn(ALOAD, 0);
+        super.visitInsn(ICONST_0);
+        super.visitFieldInsn(PUTFIELD, className, "watermark", "I");
 
+        super.visitVarInsn(ALOAD, 0);
+        super.visitLdcInsn("");
+        super.visitFieldInsn(PUTFIELD, className, "validto", "Ljava/lang/String;");
+
+        super.visitVarInsn(ALOAD, 0);
+        super.visitInsn(ACONST_NULL);
+        super.visitFieldInsn(PUTFIELD, className, "error", "Ljava/lang/String;");
+
+        super.visitVarInsn(ALOAD, 0);
+        super.visitInsn(ICONST_0);
+        super.visitFieldInsn(PUTFIELD, className, "valid", "Z");
+
+        super.visitVarInsn(ALOAD, 0);
+        super.visitLdcInsn("forever");
+        super.visitFieldInsn(PUTFIELD, className, "validto", "Ljava/lang/String;");
+
+
+        super.visitVarInsn(ALOAD, 0);
+        super.visitInsn(ICONST_1);
+        super.visitFieldInsn(PUTFIELD, className, "valid", "Z");
+
+        super.visitVarInsn(ALOAD, 0);
+        super.visitInsn(ICONST_1);
+        super.visitFieldInsn(PUTFIELD, className, "watermark", "I");
+
+        super.visitIntInsn(BIPUSH, 16);
+        super.visitIntInsn(NEWARRAY, T_BYTE);
+        super.visitInsn(DUP);
+        super.visitInsn(ICONST_0);
+        super.visitIntInsn(BIPUSH, 94);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitInsn(ICONST_1);
+        super.visitIntInsn(BIPUSH, -104);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitInsn(ICONST_2);
+        super.visitIntInsn(BIPUSH, 25);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitInsn(ICONST_3);
+        super.visitIntInsn(BIPUSH, 74);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitInsn(ICONST_4);
+        super.visitInsn(ICONST_1);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitInsn(ICONST_5);
+        super.visitIntInsn(BIPUSH, -58);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 6);
+        super.visitIntInsn(BIPUSH, -76);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 7);
+        super.visitIntInsn(BIPUSH, -113);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 8);
+        super.visitIntInsn(BIPUSH, -91);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 9);
+        super.visitIntInsn(BIPUSH, -126);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 10);
+        super.visitIntInsn(BIPUSH, -90);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 11);
+        super.visitIntInsn(BIPUSH, -87);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 12);
+        super.visitIntInsn(BIPUSH, -4);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 13);
+        super.visitIntInsn(BIPUSH, -69);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 14);
+        super.visitIntInsn(BIPUSH, -110);
+        super.visitInsn(BASTORE);
+        super.visitInsn(DUP);
+        super.visitIntInsn(BIPUSH, 15);
+        super.visitIntInsn(BIPUSH, -42);
+        super.visitInsn(BASTORE);
+        super.visitVarInsn(ASTORE, 1);
+        super.visitVarInsn(ALOAD, 1);
+        super.visitMethodInsn(INVOKESTATIC, "common/SleevedResource", "Setup", "([B)V", false);
+        super.visitInsn(RETURN);
     }
 
     @Override
