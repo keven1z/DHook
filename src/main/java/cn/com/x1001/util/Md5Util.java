@@ -5,7 +5,9 @@ import org.apache.commons.codec.binary.Hex;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @author keven1z
@@ -35,5 +37,16 @@ public class Md5Util {
                 e.printStackTrace();
             }
         }
+    }
+    public static String getMD5(String seed)
+    {
+        MessageDigest MD5 = null;
+        try {
+            MD5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        MD5.update(seed.getBytes(StandardCharsets.UTF_8));
+        return new String(Hex.encodeHex(MD5.digest()));
     }
 }

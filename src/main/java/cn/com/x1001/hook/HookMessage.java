@@ -21,7 +21,12 @@ public class HookMessage {
      * 注册agent
      */
     public static boolean register() throws IOException {
-        AgentInformation hookRegister = new AgentInformation();
+        AgentInformation hookRegister;
+        try {
+            hookRegister = new AgentInformation();
+        } catch (Exception e) {
+            return false;
+        }
         String jsonString = GsonUtil.toJsonString(hookRegister);
         HttpResponse httpResponse = HttpClient.getHttpClient().postSyn(HookConsts.SERVER_REGISTER, jsonString);
         if (httpResponse == null||httpResponse.getStatusLine().getStatusCode() != 200) {
@@ -29,8 +34,15 @@ public class HookMessage {
         }
         InputStream inputStream = httpResponse.getEntity().getContent();
         String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-        AgentInformation agentInformation = GsonUtil.toBean(result, AgentInformation.class);
-        Agent.context.register(agentInformation.getAgentId());
+        if (result.equals("1")){
+            Agent.context.register(hookRegister.getAgentId());
+
+        }
+
         return true;
+    }
+
+    public static void main(String[] args) throws IOException {
+        register();
     }
 }

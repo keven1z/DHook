@@ -1,43 +1,47 @@
 package cn.com.x1001.bean;
 
-import cn.com.x1001.util.MacUtil;
-import cn.com.x1001.util.UUidUtil;
+import cn.com.x1001.util.OSUtil;
+
+import java.lang.management.ManagementFactory;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  * @author keven1z
  * @date 2021/12/22
  */
 public class AgentInformation {
-    private String agentId;
-    private String os;
+    private String id;
+    private String name;
+    private int state;
+    private String time;
     private String javaVersion;
-    private String mac;
-    private long time;
+    private String os;
 
-    public AgentInformation(){
-//        this.agentId = UUidUtil.getUUID();
-        this.os = System.getProperty("os.name");
+    public AgentInformation() throws Exception {
+        this.id = OSUtil.getAgentId();
+        this.os = OSUtil.getOs();
+        this.state = 1;
+        this.name = ManagementFactory.getRuntimeMXBean().getName();
         this.javaVersion = System.getProperty("java.version");
-        this.mac = MacUtil.getMacAddress();
-        this.time = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        this.time = sdf.format(timestamp);
     }
 
     public String getAgentId() {
-        return agentId;
-    }
-
-    public void setAgentId(String agentId) {
-        this.agentId = agentId;
+        return id;
     }
 
     @Override
     public String toString() {
         return "AgentInformation{" +
-                "agentId='" + agentId + '\'' +
-                ", os='" + os + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", state=" + state +
+                ", time='" + time + '\'' +
                 ", javaVersion='" + javaVersion + '\'' +
-                ", mac='" + mac + '\'' +
-                ", time=" + time +
+                ", os='" + os + '\'' +
                 '}';
     }
 }

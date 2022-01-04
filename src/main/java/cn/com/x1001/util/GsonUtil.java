@@ -1,10 +1,7 @@
 package cn.com.x1001.util;
 
-import cn.com.x1001.bean.HookTmp;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.util.List;
 
 /**
  * @author keven1z
@@ -47,14 +44,6 @@ public class GsonUtil {
         }
         return t;
     }
-    public static <T> List<T> toList(String gsonString, Class<T> cls) {
-        List<T> list = null;
-        if (gson != null) {
-            //根据泛型返回解析指定的类型,TypeToken<List<T>>{}.getType()获取返回类型
-            list = gson.fromJson(gsonString, new TypeToken<List<T>>() {
-            }.getType());
-        }
-        return list;
-    }
+
 
 }

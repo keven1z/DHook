@@ -29,8 +29,8 @@ public class HookConsts {
     public static final String FLAG_PRINT_ALL_METHOD_AND_DESC = "*";
 
 
-    public static final String SERVER = "http://49.234.9.241";
-    public static final String SERVER_REGISTER = SERVER+"/register";
-    public static final String SERVER_HOOK = SERVER+"/hook";
+    public static final String SERVER = "http://127.0.0.1:8080";
+    public static final String SERVER_REGISTER = SERVER+"/agent/register";
+    public static final String SERVER_HOOK = SERVER+"/hook/all";
 
 }

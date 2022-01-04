@@ -16,7 +16,7 @@ import java.lang.instrument.Instrumentation;
 public class Agent {
     //打印输出
     public static PrintStream out = System.out;
-    public static InstrumentationContext context;
+    public static InstrumentationContext context =new InstrumentationContext();
 
     public static void premain(String args, Instrumentation inst) {
         start(inst);
@@ -53,6 +53,7 @@ public class Agent {
         try {
             return HookMessage.register();
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             return false;
         }
     }

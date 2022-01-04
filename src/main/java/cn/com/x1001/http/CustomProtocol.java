@@ -10,27 +10,12 @@ public class CustomProtocol implements Serializable {
 
     private static final long serialVersionUID = 4671171056512301542L;
     private String id ;
-    private String content ;
-
-    public CustomProtocol(String id, String content) {
+    public CustomProtocol(String id) {
         this.id = id;
-    }
-    public CustomProtocol() {
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }

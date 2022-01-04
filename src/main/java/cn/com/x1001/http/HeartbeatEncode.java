@@ -13,10 +13,7 @@ import java.nio.charset.StandardCharsets;
 public class HeartbeatEncode extends MessageToByteEncoder<CustomProtocol> {
     @Override
     protected void encode(ChannelHandlerContext ctx, CustomProtocol msg, ByteBuf out) throws Exception {
-
         out.writeBytes(msg.getId().getBytes(StandardCharsets.UTF_8)) ;
-        out.writeBytes(msg.getContent().getBytes(StandardCharsets.UTF_8)) ;
-
     }
 }
 

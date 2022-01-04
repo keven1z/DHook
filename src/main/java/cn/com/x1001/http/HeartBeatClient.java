@@ -1,5 +1,6 @@
 package cn.com.x1001.http;
 
+import cn.com.x1001.Agent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -16,10 +17,10 @@ import io.netty.util.CharsetUtil;
 public class HeartBeatClient extends SimpleChannelInboundHandler<ByteBuf> {
 
 
-    private static ByteBuf HEART_BEAT;
+    private static CustomProtocol HEART_BEAT;
 
     public HeartBeatClient(String agentId){
-        HEART_BEAT = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(new CustomProtocol("","pong").toString(), CharsetUtil.UTF_8));
+         HEART_BEAT = new CustomProtocol(agentId);
     }
     /**
      * 取消绑定

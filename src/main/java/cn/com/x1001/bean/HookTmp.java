@@ -1,9 +1,11 @@
 package cn.com.x1001.bean;
 
 import cn.com.x1001.hook.HookConsts;
+import cn.com.x1001.util.Md5Util;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -11,18 +13,21 @@ import java.util.Set;
  * @date 2021/11/18
  */
 public class HookTmp {
+    private String id;
     private String className;
     private String method;
     private String desc;
     private String returnValue;
     private Set<Integer> actions = new HashSet<>();
     private HashMap<Integer, String> parameters = new HashMap<>();
+    private String md5;
 
     public HookTmp(String className, String method, String desc, String parameter) {
         this.className = parseAction(className);
         this.method = method;
         this.desc = desc;
         this.parameters = parseParameter(parameter);
+        this.md5 = getMd5();
     }
 
     private String parseAction(String className) {
@@ -101,5 +106,34 @@ public class HookTmp {
         return "ClassName='" + className + '\'' +
                 ", method='" + method + '\'' +
                 ", desc='" + desc;
+    }
+    public String getMd5(){
+        if (md5 != null) return md5;
+        StringBuilder sb = new StringBuilder();
+        sb.append(className).append(method).append(desc);
+        if (returnValue != null) sb.append(returnValue);
+        String md5 = Md5Util.getMD5(sb.toString());
+        return md5;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HookTmp hookTmp = (HookTmp) o;
+        return md5.equals(hookTmp.md5);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(md5);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

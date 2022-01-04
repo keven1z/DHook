@@ -17,9 +17,7 @@ import org.apache.http.HttpResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 新增hook类文件监控并加载到内存中
@@ -31,6 +29,7 @@ public class ClassFileWatch extends Thread {
     private String canonicalPath;
     private String fileName;
     private static String last_file_md5 = "";
+    private static List<HookTmp> lastHookTmps = new ArrayList<>();
 
     public ClassFileWatch() throws IOException {
         File directory = new File(".");
@@ -74,7 +73,6 @@ public class ClassFileWatch extends Thread {
 
         for (HookTmp hookTmp : classInfos) {
             addToHookClass(hookTmp);
-            Agent.out.println("[+] load hook：" + hookTmp);
         }
 
     }
@@ -83,12 +81,17 @@ public class ClassFileWatch extends Thread {
         if (response  == null || response.getStatusLine().getStatusCode() != 200) return;
         HttpEntity entity = response.getEntity();
         String content = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-        List<HookTmp> hookTmps = GsonUtil.toList(content, HookTmp.class);
+        HookTmp[] ht = GsonUtil.toBean(content, HookTmp[].class);
+        List<HookTmp> hookTmps = Arrays.asList(ht);
         if (hookTmps.isEmpty()) return;
 
         for (HookTmp hookTmp:hookTmps){
-            addToHookClass(hookTmp);
+            if (!lastHookTmps.contains(hookTmp)){
+                Agent.out.println("[+] load hook：" + hookTmp);
+                addToHookClass(hookTmp);
+            }
         }
+        lastHookTmps = hookTmps;
     }
     /**
      * @param hookTmp hook class临时对象
@@ -123,5 +126,9 @@ public class ClassFileWatch extends Thread {
         if (!last_file_md5.equals(configMd5)) addHook(file);
         last_file_md5 = configMd5;
 
+    }
+
+    public static void main(String[] args) throws IOException {
+        new ClassFileWatch().getHookByServer();
     }
 }
