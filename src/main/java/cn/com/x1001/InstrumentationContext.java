@@ -54,6 +54,10 @@ public class InstrumentationContext {
         return false;
     }
 
+    public CopyOnWriteArraySet<HookClass> getHookClasses() {
+        return hookClasses;
+    }
+
     public boolean isHookClass(String className, String method, String desc) {
         for (HookClass hookHookClass : getClassHashSet()) {
             String hookClassName = hookHookClass.getClassName();

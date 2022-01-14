@@ -42,7 +42,4 @@ public class HookMessage {
         return true;
     }
 
-    public static void main(String[] args) throws IOException {
-        register();
-    }
 }

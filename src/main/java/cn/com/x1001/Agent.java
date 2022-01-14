@@ -1,6 +1,7 @@
 package cn.com.x1001;
 
 
+import cn.com.x1001.classmap.HookClass;
 import cn.com.x1001.hook.HookConsts;
 import cn.com.x1001.hook.HookMessage;
 import cn.com.x1001.hook.HookTransformer;
@@ -19,21 +20,31 @@ public class Agent {
     public static InstrumentationContext context =new InstrumentationContext();
 
     public static void premain(String args, Instrumentation inst) {
-        start(inst);
+        try {
+            start(inst);
+        } catch (IOException e) {
+            //
+        }
     }
 
-    private static void start(Instrumentation inst) {
+    private static void start(Instrumentation inst) throws IOException {
         banner();
-        if(register()){
-            System.out.println("[+] Agent register successfully,Server:"+ HookConsts.SERVER);
-            WatchManager.startWatch(new HeartBeat(context.getAgentID()));
-        }
-        else {
-            System.out.println("[-] Agent register failed,Server:"+ HookConsts.SERVER);
-        }
+//        new ClassFileWatch();
+        HookClass hookClass = new HookClass();
+        hookClass.setClassName("common/Authorization");
+        hookClass.setMethod("<init>");
+        hookClass.setDesc("()V");
+        context.addHook(hookClass);
+//        if(register()){
+//            System.out.println("[+] Agent register successfully,Server:"+ HookConsts.SERVER);
+//            WatchManager.startWatch(new HeartBeat(context.getAgentID()));
+//        }
+//        else {
+//            System.out.println("[-] Agent register failed,Server:"+ HookConsts.SERVER);
+//        }
+        new HookWatch(inst).start();
         init();
         inst.addTransformer(new HookTransformer(), true);
-        new HookWatch(inst).start();
     }
 
     private static void banner() {
@@ -46,7 +57,7 @@ public class Agent {
     }
 
     private static void init() {
-        context = new InstrumentationContext();
+
     }
 
     private static boolean register() {

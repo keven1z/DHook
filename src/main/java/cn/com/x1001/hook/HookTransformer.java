@@ -38,7 +38,6 @@ public class HookTransformer implements ClassFileTransformer {
             }
             return classfileBuffer;
         }
-
         context.setHooked(className);
         /* 如果为接口,添加所有实现该接口的第一个类为hook点*/
         if (ClassUtil.isInterface(classReader.getAccess())) {

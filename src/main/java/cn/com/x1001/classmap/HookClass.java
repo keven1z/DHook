@@ -1,9 +1,8 @@
 package cn.com.x1001.classmap;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import cn.com.x1001.bean.MethodActionEntity;
+
+import java.util.*;
 
 /**
  * @author keven1z
@@ -18,7 +17,7 @@ public class HookClass {
     private String desc;
     private String returnValue;
     private HashMap<Integer, String> parameters = new HashMap<>();
-
+    private List<MethodActionEntity> onMethodAction;
     public HookClass() {
     }
 
@@ -91,12 +90,12 @@ public class HookClass {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HookClass hookClass = (HookClass) o;
-        return className.equals(hookClass.className) && method.equals(hookClass.method) && Objects.equals(desc, hookClass.desc);
+        return className.equals(hookClass.className) && Objects.equals(method, hookClass.method) && Objects.equals(desc, hookClass.desc) && Objects.equals(returnValue, hookClass.returnValue) && Objects.equals(parameters, hookClass.parameters) && Objects.equals(onMethodAction, hookClass.onMethodAction);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(className, method, desc);
+        return Objects.hash(className, method, desc, returnValue, parameters, onMethodAction);
     }
 
     public boolean isHooked() {
@@ -109,11 +108,26 @@ public class HookClass {
 
     @Override
     public String toString() {
-        return className + "." + method + desc;
+        return "HookClass{" +
+                "className='" + className + '\'' +
+                ", method='" + method + '\'' +
+                ", desc='" + desc + '\'' +
+                ", returnValue='" + returnValue + '\'' +
+                ", parameters=" + parameters +
+                ", onMethodAction=" + onMethodAction +
+                '}';
     }
+
     public void cloneHook(HookClass hookClass){
         this.setParameters(hookClass.getParameters());
         this.setMethod(hookClass.getMethod());
     }
 
+    public List<MethodActionEntity> getOnMethodAction() {
+        return onMethodAction;
+    }
+
+    public void setOnMethodAction(List<MethodActionEntity> onMethodAction) {
+        this.onMethodAction = onMethodAction;
+    }
 }

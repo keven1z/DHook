@@ -1,15 +1,13 @@
 package cn.com.x1001.util;
 
-import cn.com.x1001.Agent;
-import cn.com.x1001.bean.HookTmp;
-import org.apache.commons.csv.CSVFormat;
+import cn.com.x1001.classmap.HookClass;
 import org.apache.commons.csv.CSVRecord;
 import org.objectweb.asm.Opcodes;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import static cn.com.x1001.hook.HookConsts.*;
 /**
@@ -31,19 +29,11 @@ public class ClassUtil {
      * @return 解析好的hook类的临时文件
      * @throws IOException
      */
-    public static Set<HookTmp> fileParse(File file) throws IOException {
+    public static List<HookClass> fileParse(File file) throws IOException {
         Reader in = new FileReader(file);
-        Iterable<CSVRecord> records = CSVFormat.EXCEL.withFirstRecordAsHeader().parse(in);
-        HashSet<HookTmp> hookTmps = new HashSet<>();
-        for (CSVRecord record : records) {
-            try{
-                buildHookTmp(record, hookTmps);
-            }
-            catch (IllegalArgumentException e){
-                Agent.out.println("导入hook错误："+e.getMessage());
-            }
-        }
-        return hookTmps;
+        List<HookClass> hookClasses = GsonUtil.toBean(in, HookClass.class);
+
+        return hookClasses;
     }
 
     /**
