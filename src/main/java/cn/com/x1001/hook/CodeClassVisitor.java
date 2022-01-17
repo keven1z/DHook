@@ -18,7 +18,7 @@ public class CodeClassVisitor extends ClassVisitor {
     Set<String> methods;
 
     public CodeClassVisitor(ClassVisitor classVisitor, String className) {
-        super(Opcodes.ASM5, classVisitor);
+        super(Opcodes.ASM7, classVisitor);
         this.className = className;
         this.hookClasses = Agent.context.getHookClasses(className);
     }
@@ -27,7 +27,7 @@ public class CodeClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor localMethodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
         /*
-            如果method为*，则将所有方法打印出来   w
+            如果method为*，则将所有方法打印出来
          */
         if (HookUtil.isContainMethod(this.hookClasses,HookConsts.FLAG_PRINT_ALL_METHOD_AND_DESC)) {
             Agent.out.println(this.className + "." + name + desc);

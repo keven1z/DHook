@@ -32,5 +32,7 @@ public class HookConsts {
     public static final String SERVER = "http://127.0.0.1:8080";
     public static final String SERVER_REGISTER = SERVER+"/agent/register";
     public static final String SERVER_HOOK = SERVER+"/hook/all";
+    public static final String REGISTER_ID = "";
+
 
 }

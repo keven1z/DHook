@@ -36,22 +36,6 @@ public class ClassUtil {
         return hookClasses;
     }
 
-    /**
-     * 构建hook类的临时类
-     * @param record csv 记录类
-     * @param hookTmps hook类的临时文件
-     */
-    private static void buildHookTmp(CSVRecord record, HashSet<HookTmp> hookTmps) {
-        String className = record.get(CSV_CLASS_NAME);
-        String method = record.get(CSV_METHOD);
-        String desc = record.get(CSV_DESC);
-        String returnValue = record.get(CSV_RETURN);
-        String parameter = record.get(CSV_PARAMETER);
-        if (className == null || method == null) return;
-        HookTmp hookTmp = new HookTmp(className, method, desc,parameter);
-        hookTmp.setReturnValue(returnValue);
-        hookTmps.add(hookTmp);
-    }
 
     public static void writeFiles(String fileName, byte[] data) throws Exception {
         File directory = new File(".");
