@@ -18,12 +18,13 @@ public class HookClass {
     private String returnValue;
     private HashMap<Integer, String> parameters = new HashMap<>();
     private List<MethodActionEntity> onMethodAction;
+    private String flag = "";
+
     public HookClass() {
     }
 
 
-
-    public HookClass(String className, String method, String desc, String returnValue, HashMap<Integer, String> parameters,Set<Integer> actions) {
+    public HookClass(String className, String method, String desc, String returnValue, HashMap<Integer, String> parameters, Set<Integer> actions) {
         this.className = className;
         this.actions = actions;
         this.method = method;
@@ -85,17 +86,30 @@ public class HookClass {
         this.parameters.put(pos, value);
     }
 
+    public String getFlag() {
+        if (!Objects.equals(this.flag, "")) return flag;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(className);
+        stringBuilder.append(method != null ? method : "");
+        stringBuilder.append(desc != null ? desc : "");
+        stringBuilder.append(returnValue != null ? returnValue : "");
+        stringBuilder.append(parameters != null ? parameters : "");
+        stringBuilder.append(onMethodAction != null ? parameters : "");
+        this.flag = stringBuilder.toString();
+        return this.flag;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HookClass hookClass = (HookClass) o;
-        return className.equals(hookClass.className) && Objects.equals(method, hookClass.method) && Objects.equals(desc, hookClass.desc) && Objects.equals(returnValue, hookClass.returnValue) && Objects.equals(parameters, hookClass.parameters) && Objects.equals(onMethodAction, hookClass.onMethodAction);
+        return getFlag().equals(hookClass.getFlag());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(className, method, desc, returnValue, parameters, onMethodAction);
+        return Objects.hash(getFlag());
     }
 
     public boolean isHooked() {
@@ -118,7 +132,7 @@ public class HookClass {
                 '}';
     }
 
-    public void cloneHook(HookClass hookClass){
+    public void cloneHook(HookClass hookClass) {
         this.setParameters(hookClass.getParameters());
         this.setMethod(hookClass.getMethod());
     }

@@ -29,20 +29,19 @@ public class Agent {
 
     private static void start(Instrumentation inst) throws IOException {
         banner();
-//        new ClassFileWatch();
-        HookClass hookClass = new HookClass();
-        hookClass.setClassName("common/Authorization");
-        hookClass.setMethod("<init>");
-        hookClass.setDesc("()V");
-        context.addHook(hookClass);
-//        if(register()){
-//            System.out.println("[+] Agent register successfully,Server:"+ HookConsts.SERVER);
-//            WatchManager.startWatch(new HeartBeat(context.getAgentID()));
-//        }
-//        else {
-//            System.out.println("[-] Agent register failed,Server:"+ HookConsts.SERVER);
-//        }
-        new HookWatch(inst).start();
+//        HookClass hookClass = new HookClass();
+//        hookClass.setClassName("common/Authorization");
+//        hookClass.setMethod("<init>");
+//        hookClass.setDesc("()V");
+//        context.addHook(hookClass);
+        if(register()){
+            System.out.println("[+] Agent register successfully,Server:"+ HookConsts.SERVER);
+            WatchManager.startWatch(new HeartBeat(context.getAgentID()));
+        }
+        else {
+            System.out.println("[!] Agent register failed,Server:"+ HookConsts.SERVER+",offline mode start.");
+        }
+        WatchManager.startWatch(new ClassFileWatch(),new HookWatch(inst));
         init();
         inst.addTransformer(new HookTransformer(), true);
     }
@@ -63,7 +62,7 @@ public class Agent {
     private static boolean register() {
         try {
             return HookMessage.register();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
         }

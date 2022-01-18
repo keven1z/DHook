@@ -34,8 +34,8 @@ public class CodeClassVisitor extends ClassVisitor {
         }
 
         if (HookUtil.isContainMethodDesc(hookClasses,name,desc)){
-            Agent.out.println("[+] Hook class:"+this.className + "." + name + desc);
             HookClass hookClass = Agent.context.getHookClass(hookClasses, name, desc);
+            Agent.out.println("[+] Hook class:"+this.className + "." + name + desc);
             return new HookAdviceAdapter(Opcodes.ASM5, localMethodVisitor, access, name, desc, hookClass);
         }
 

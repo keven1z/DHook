@@ -33,8 +33,8 @@ public class ClassFileWatch extends Watch {
     public ClassFileWatch() throws IOException {
         File directory = new File(".");
         canonicalPath = directory.getCanonicalPath();
-        fileName =canonicalPath + File.separator+HookConsts.CSV_FILE_NAME;
-        Agent.out.println("配置文件读取路径：" + fileName);
+        fileName =canonicalPath + File.separator+HookConsts.CONFIG_FILE_NAME;
+        Agent.out.println("[+] config path：" + fileName);
         readHook();
     }
 
@@ -42,6 +42,14 @@ public class ClassFileWatch extends Watch {
     public void run() {
         do {
             readHook();
+            if (context.state()) {
+                try {
+                    getHookByServer();
+                } catch (Exception e) {
+                    //TODO
+                    System.out.println(e.getMessage());
+                }
+            }
             pause(3000);
         } while (true);
     }
@@ -75,10 +83,12 @@ public class ClassFileWatch extends Watch {
 
     }
     public void getHookByServer() throws IOException {
-        HttpResponse response = HttpClient.getHttpClient().getSyn(HookConsts.SERVER_HOOK);
+        String url = HookConsts.SERVER_HOOK+"?id="+ HookConsts.REGISTER_ID;
+        HttpResponse response = HttpClient.getHttpClient().getSyn(url);
         if (response  == null || response.getStatusLine().getStatusCode() != 200) return;
         HttpEntity entity = response.getEntity();
         String content = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
+
         HookClass[] ht = GsonUtil.toBean(content, HookClass[].class);
         List<HookClass> hookClasses = Arrays.asList(ht);
         if (hookClasses.isEmpty()) return;
@@ -90,7 +100,7 @@ public class ClassFileWatch extends Watch {
     public void readHook(){
         File file = new File(fileName);
         if (!file.exists()) {
-            System.out.println("[-] 文件不存在");
+//            System.out.println("[-] 文件不存在");
             return;
         }
         String configMd5 = Md5Util.getMD5(file);

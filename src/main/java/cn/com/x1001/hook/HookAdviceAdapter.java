@@ -184,6 +184,7 @@ public class HookAdviceAdapter extends AdviceAdapter {
      */
     private void modifyEnterParameter(){
         HashMap<Integer, String> parameters = this.hookClass.getParameters();
+        if (parameters == null) return;
         for (Map.Entry<Integer,String> entries: parameters.entrySet()){
             Integer pos = entries.getKey();
             String value = entries.getValue();
@@ -214,8 +215,8 @@ public class HookAdviceAdapter extends AdviceAdapter {
      *
      */
     private void modifyReturnValue(){
+        if (this.returnValue == null) return;
         int returnCode = parseReturnValue(this.returnValue);
-//        System.out.println("hook 类型:" + returnCode + ",值:" + returnValue);
         switch (returnCode) {
             case RETURN_INT:
                 super.visitLdcInsn(Integer.parseInt(returnValue));

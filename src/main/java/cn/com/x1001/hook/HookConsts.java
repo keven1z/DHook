@@ -5,7 +5,7 @@ public class HookConsts {
     /*
         csv文件配置信息
      */
-    public static final String CSV_FILE_NAME  = "hookClass.csv";
+    public static final String CONFIG_FILE_NAME  = "hookClass.json";
     public static final String CSV_CLASS_NAME  = "className";
     public static final String CSV_METHOD  = "method";
     public static final String CSV_DESC  = "desc";
@@ -31,8 +31,8 @@ public class HookConsts {
 
     public static final String SERVER = "http://127.0.0.1:8080";
     public static final String SERVER_REGISTER = SERVER+"/agent/register";
-    public static final String SERVER_HOOK = SERVER+"/hook/all";
-    public static final String REGISTER_ID = "";
+    public static final String SERVER_HOOK = SERVER+"/hook/find";
+    public static final String REGISTER_ID = "9131b3c2666c438a8ce433cb551be977";
 
 
 }

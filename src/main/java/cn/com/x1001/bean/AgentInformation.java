@@ -1,10 +1,12 @@
 package cn.com.x1001.bean;
 
+import cn.com.x1001.hook.HookConsts;
 import cn.com.x1001.util.OSUtil;
 
 import java.lang.management.ManagementFactory;
-import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author keven1z
@@ -12,21 +14,24 @@ import java.text.SimpleDateFormat;
  */
 public class AgentInformation {
     private String id;
-    private String name;
     private int state;
     private String time;
     private String javaVersion;
     private String os;
+    private String bindProcessName;
 
     public AgentInformation() throws Exception {
-        this.id = OSUtil.getAgentId();
+        this.id = HookConsts.REGISTER_ID;
         this.os = OSUtil.getOs();
         this.state = 1;
-        this.name = ManagementFactory.getRuntimeMXBean().getName();
+        this.bindProcessName = ManagementFactory.getRuntimeMXBean().getName();
         this.javaVersion = System.getProperty("java.version");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        this.time = sdf.format(timestamp);
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH/mm/ss");
+        try {
+            this.time = dateFormat.format(date);
+        } catch (Exception e) {
+        }
     }
 
     public String getAgentId() {
@@ -37,7 +42,7 @@ public class AgentInformation {
     public String toString() {
         return "AgentInformation{" +
                 "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                ", bindProcessName='" + bindProcessName + '\'' +
                 ", state=" + state +
                 ", time='" + time + '\'' +
                 ", javaVersion='" + javaVersion + '\'' +

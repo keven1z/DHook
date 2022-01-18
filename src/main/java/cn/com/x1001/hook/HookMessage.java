@@ -20,13 +20,9 @@ public class HookMessage {
     /**
      * 注册agent
      */
-    public static boolean register() throws IOException {
+    public static boolean register() throws Exception {
         AgentInformation hookRegister;
-        try {
-            hookRegister = new AgentInformation();
-        } catch (Exception e) {
-            return false;
-        }
+        hookRegister = new AgentInformation();
         String jsonString = GsonUtil.toJsonString(hookRegister);
         HttpResponse httpResponse = HttpClient.getHttpClient().postSyn(HookConsts.SERVER_REGISTER, jsonString);
         if (httpResponse == null||httpResponse.getStatusLine().getStatusCode() != 200) {
@@ -36,9 +32,7 @@ public class HookMessage {
         String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         if (result.equals("1")){
             Agent.context.register(hookRegister.getAgentId());
-
         }
-
         return true;
     }
 

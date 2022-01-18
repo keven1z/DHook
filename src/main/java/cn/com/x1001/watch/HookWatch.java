@@ -7,6 +7,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.Set;
 
+import static cn.com.x1001.Agent.context;
+
 /**
  * hook点的监控，当发现存在未hook类，自动加入hook
  */
@@ -21,9 +23,10 @@ public class HookWatch extends Watch {
         while (true) {
             Set<HookClass> classHashSet = Agent.context.getClassHashSet();
             for (HookClass hookClass :classHashSet){
-                if (hookClass.isHooked()) continue;
+                if (hookClass.getClassName() == null || hookClass.isHooked()) continue;
                 try {
                     reTransformClass(hookClass.getClassName());
+                    System.out.println("transform class :"+hookClass.getClassName());
                 } catch (UnmodifiableClassException e) {
                     System.out.println("transform class error:"+e.getMessage());
                 }

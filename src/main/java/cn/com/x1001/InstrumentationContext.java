@@ -33,6 +33,15 @@ public class InstrumentationContext {
     public String getAgentID(){
         return this.agentID;
     }
+
+    /**
+     * agent启动的状态，true为服务器连接状态，false为离线状态
+     * @return
+     */
+    public boolean state(){
+        if (getAgentID() == null) return false;
+        return  true;
+    }
     public void addHook(HookClass hookClass) {
         this.getClassHashSet().add(hookClass);
     }
