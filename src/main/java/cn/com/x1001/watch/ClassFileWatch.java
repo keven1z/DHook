@@ -1,6 +1,7 @@
 package cn.com.x1001.watch;
 
 import cn.com.x1001.Agent;
+import cn.com.x1001.Config;
 import cn.com.x1001.classmap.HookClass;
 import cn.com.x1001.hook.HookConsts;
 import cn.com.x1001.http.HttpClient;
@@ -54,15 +55,6 @@ public class ClassFileWatch extends Watch {
         } while (true);
     }
 
-
-    private void pause(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * 将文件中的类加入到hook表中
      *
@@ -83,7 +75,7 @@ public class ClassFileWatch extends Watch {
 
     }
     public void getHookByServer() throws IOException {
-        String url = HookConsts.SERVER_HOOK+"?id="+ HookConsts.REGISTER_ID;
+        String url = Config.SERVER_HOOK+"?id="+ HookConsts.REGISTER_ID;
         HttpResponse response = HttpClient.getHttpClient().getSyn(url);
         if (response  == null || response.getStatusLine().getStatusCode() != 200) return;
         HttpEntity entity = response.getEntity();

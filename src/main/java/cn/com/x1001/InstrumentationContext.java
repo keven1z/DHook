@@ -1,5 +1,6 @@
 package cn.com.x1001;
 
+import cn.com.x1001.bean.ClassMapEntity;
 import cn.com.x1001.classmap.*;
 import cn.com.x1001.util.ClassUtil;
 
@@ -18,6 +19,11 @@ public class InstrumentationContext {
      * 类的图集合
      */
     private HookGraph classMap = new HookGraph();
+
+    /**
+     * 发送到server端的class
+     */
+    public CopyOnWriteArraySet<ClassMapEntity> classMapView = new CopyOnWriteArraySet<>();
     /*
      * 存储hook的接口或类
      */

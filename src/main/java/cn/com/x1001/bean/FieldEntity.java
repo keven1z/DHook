@@ -15,7 +15,7 @@ public class FieldEntity{
     @Expose
     private String name;
     @Expose
-    private Object value;
+    private String value;
     private int maId;
     @Expose
     private int sort;
@@ -52,11 +52,11 @@ public class FieldEntity{
         this.type = type;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

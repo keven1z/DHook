@@ -1,6 +1,8 @@
 package cn.com.x1001.hook;
 
+import cn.com.x1001.bean.MethodActionEntity;
 import cn.com.x1001.classmap.HookClass;
+import cn.com.x1001.util.HookUtil;
 import cn.com.x1001.util.StringUtil;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -40,13 +42,27 @@ public class HookAdviceAdapter extends AdviceAdapter {
 
     @Override
     public void visitCode() {
-        modifyEnterParameter();
+//        暂未实现
+//        modifyEnterParameter();
         modifyReturnValue();
     }
 
     @Override
     protected void onMethodEnter() {
         String className = this.hookClass.getClassName();
+        List<MethodActionEntity> methodActions = hookClass.getOnMethodAction();
+        for (MethodActionEntity methodActionEntity:methodActions){
+            if (methodActionEntity.getType() == ACTION_ON_METHOD_ENTER){
+                try {
+                    HookUtil.executeAction(this,className,methodActionEntity);
+                } catch (ClassNotFoundException e) {
+                    //TODO 暂未处理
+                    System.out.println(e.getMessage());
+                }
+
+            }
+        }
+        /** 破解cs
         super.visitVarInsn(ALOAD, 0);
         super.visitInsn(ICONST_0);
         super.visitFieldInsn(PUTFIELD, className, "watermark", "I");
@@ -146,10 +162,23 @@ public class HookAdviceAdapter extends AdviceAdapter {
         super.visitVarInsn(ALOAD, 1);
         super.visitMethodInsn(INVOKESTATIC, "common/SleevedResource", "Setup", "([B)V", false);
         super.visitInsn(RETURN);
+         **/
     }
 
     @Override
     protected void onMethodExit(int opcode) {
+        String className = this.hookClass.getClassName();
+        List<MethodActionEntity> methodActions = hookClass.getOnMethodAction();
+        for (MethodActionEntity methodActionEntity:methodActions){
+            if (methodActionEntity.getType() == ACTION_ON_METHOD_EXIT){
+                try {
+                    HookUtil.executeAction(this,className,methodActionEntity);
+                } catch (ClassNotFoundException e) {
+                    //TODO 暂未处理
+                }
+
+            }
+        }
         if (opcode == RETURN) {
             visitInsn(ACONST_NULL);
         } else if (opcode == ARETURN || opcode == ATHROW) {
@@ -230,8 +259,11 @@ public class HookAdviceAdapter extends AdviceAdapter {
             case RETURN_STRING:
                 super.visitLdcInsn(returnValue);
                 super.visitInsn(ARETURN);
+                break;
             default:
                 super.visitCode();
         }
     }
+
+
 }

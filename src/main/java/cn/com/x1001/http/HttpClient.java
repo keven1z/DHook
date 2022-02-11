@@ -14,6 +14,8 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author keven1z
@@ -54,14 +56,16 @@ public class HttpClient {
         get.setConfig(config);
         request.execute(get,null);
     }
-    public void post(String url,String postJson) throws UnsupportedEncodingException {
-        if (postJson == null) return;
+    public HttpResponse post(String url, String postJson) throws UnsupportedEncodingException, ExecutionException, InterruptedException {
+        if (postJson == null) return null;
         request.start();
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new StringEntity(postJson));
         httpPost.setHeader("Accept", "application/json");
         httpPost.setHeader("Content-type", "application/json");
-        request.execute(httpPost,null);
+        Future<HttpResponse> responseFuture = request.execute(httpPost, null);
+        return responseFuture.get();
+
     }
 
     /**

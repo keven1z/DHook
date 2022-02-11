@@ -26,7 +26,6 @@ public class HookWatch extends Watch {
                 if (hookClass.getClassName() == null || hookClass.isHooked()) continue;
                 try {
                     reTransformClass(hookClass.getClassName());
-                    System.out.println("transform class :"+hookClass.getClassName());
                 } catch (UnmodifiableClassException e) {
                     System.out.println("transform class error:"+e.getMessage());
                 }
@@ -45,9 +44,9 @@ public class HookWatch extends Watch {
 //            if (clazz.isInterface()) continue;
             String className = clazz.getName().replace(".", "/");
             if (className.equals(transformClassName)) {
+                System.out.println("transform class :"+ className);
                 instrumentation.retransformClasses(clazz);
             }
-
         }
     }
 }

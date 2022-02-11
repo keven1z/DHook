@@ -3,15 +3,13 @@ package cn.com.x1001.hook;
 
 import cn.com.x1001.Agent;
 import cn.com.x1001.InstrumentationContext;
+import cn.com.x1001.bean.ClassMapEntity;
 import cn.com.x1001.classmap.ClassVertex;
-import cn.com.x1001.classmap.HookClass;
 import cn.com.x1001.classmap.HookGraph;
 import cn.com.x1001.util.ClassUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -28,6 +26,8 @@ public class HookTransformer implements ClassFileTransformer {
         if (null == className) {
             return classfileBuffer;
         }
+        buildClassMap(className);
+
         ClassReader classReader = new ClassReader(classfileBuffer);
         buildClassMap(classReader, className);
 
@@ -51,10 +51,15 @@ public class HookTransformer implements ClassFileTransformer {
         if (context.containAction(className, HookConsts.ACTION_GET_DECOMPILER)) {
             ClassUtil.exportClass(classfileBuffer, className);
         }
-
         ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        CodeClassVisitor codeClassVisitor = new CodeClassVisitor(classWriter, className);
-        classReader.accept(codeClassVisitor, ClassReader.EXPAND_FRAMES);
+        try{
+            CodeClassVisitor codeClassVisitor = new CodeClassVisitor(classWriter, className);
+            classReader.accept(codeClassVisitor, ClassReader.EXPAND_FRAMES);
+        }
+        catch (Throwable e){
+            //防止accept时出现异常，导致修改失败
+            System.out.println(e.getMessage());
+        }
         return classWriter.toByteArray();
     }
 
@@ -76,6 +81,13 @@ public class HookTransformer implements ClassFileTransformer {
 //            System.out.println("spend time:"+Agent.spendTime);
 //        }
 
+    }
+
+    private void buildClassMap(String className){
+        String[] split = className.split("/");
+        String realClassName = split[split.length-1];
+        String packageName = className.substring(0,className.lastIndexOf("/"));
+        context.classMapView.add(new ClassMapEntity(realClassName,packageName));
     }
 
     /**
