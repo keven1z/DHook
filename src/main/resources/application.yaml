@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:./dhook.sqlite
+    username:
+    password:
+    driver-class-name: org.sqlite.JDBC
