@@ -10,6 +10,8 @@ import cn.com.x1001.util.ClassUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -65,7 +67,7 @@ public class HookTransformer implements ClassFileTransformer {
         String superName = classReader.getSuperName();
         HashSet<String> ancestors = buildAncestors(superName, interfaces);
         ClassVertex classVertex = classMap.buildVertex(className, classReader.getAccess());
-        for (String ancestorsClassName : ancestors) {
+        for (String ancestorsClassName : ancestors)  {
             ClassVertex ancestorsVertex = classMap.addNode(ancestorsClassName, -1);
             /*將頂點關係加入節點*/
             classMap.addEdge(classVertex, ancestorsVertex);

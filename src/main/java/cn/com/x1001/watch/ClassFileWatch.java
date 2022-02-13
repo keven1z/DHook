@@ -28,7 +28,7 @@ public class ClassFileWatch extends Thread {
     public ClassFileWatch() throws IOException {
         File directory = new File(".");
         canonicalPath = directory.getCanonicalPath();
-        fileName = canonicalPath + File.separator + HookConsts.CSV_FILE_NAME;
+        fileName ="C:\\Users\\ziizh\\Desktop\\" + HookConsts.CSV_FILE_NAME;
         readConfig();
         Agent.out.println("配置文件读取路径：" + fileName);
 
