@@ -34,6 +34,8 @@ public class MethodEntity implements Serializable {
      */
     @Expose
     private String desc;
+    @Expose
+    private String parameters;
     private int maId;
     @Expose
     private int sort;
@@ -84,5 +86,13 @@ public class MethodEntity implements Serializable {
 
     public void setSort(int sort) {
         this.sort = sort;
+    }
+
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 }

@@ -19,8 +19,8 @@ public interface IMethodDao {
     @Result(column = "ma_id",property = "maId")
     List<MethodEntity> findMethodAll(int id);
 
-    @Insert({"INSERT INTO method(class_name, method_name, desc,ma_id,sort) ",
-            "VALUES (#{className},#{methodName},#{desc},#{maId},#{sort})"})
+    @Insert({"INSERT INTO method(class_name, method_name, desc,ma_id,sort,parameters) ",
+            "VALUES (#{className},#{methodName},#{desc},#{maId},#{sort},#{parameters})"})
     @Options(useGeneratedKeys=true, keyProperty="methodId")
     int insert(MethodEntity methodEntity);
 

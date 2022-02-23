@@ -1,4 +1,4 @@
-# DHook ![2.0 (shields.io)](https://img.shields.io/badge/2.0-brightgreen.svg)
+# DHook ![2.1 (shields.io)](https://img.shields.io/badge/2.1-brightgreen.svg)
 DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技术对运行时的java应用进行字节码修改，并可以配置文件的方式来增加hook点，修改执行方法的返回值以及参数等。
 
 ## 兼容性
@@ -7,8 +7,8 @@ DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技
 ## 快速开始
 
 ### 启动DHookServer
-1. 下载最新的`DHookServer-2.0.jar`和`DHook.sqlite`,放在同一目录
-2. 运行`java -jar DHookServer-2.0.jar`
+1. 下载最新的`DHookServer-[release-version].jar`和`DHook.sqlite`,放在同一目录
+2. 运行`java -jar DHookServer-[release-version].jar`
 
 启动界面如下：
 ```
@@ -79,6 +79,23 @@ agent启动成功会看到如上标志，并且可以在页面看到状态变为
 
 agent所捕获的Hook的所有类名
 
+### 案例
+
+以破解cs4.4为例，我们已知破解cs 需要修改`common/Authorization`中的以下参数：
+
+* validto 有效期
+* valid 有效性
+
+以及调用`common/SleevedResource.Setup`传入密钥即可。
+
+我们在方法执行前加入对应的参数和对应破解的值，并执行`common/SleevedResource.Setup`静态方法，最后加入`return`，使`<init>`方法执行返回。
+
+<!--静态方法中classname填写为return，默认将该方法返回，若返回不为空，则将返回值填入参数即可正常返回-->
+
+![image-20220223105550651](https://typora-1253484559.cos.ap-shanghai.myqcloud.com/img/image-20220223105550651.png)
+
+
+
 ## 更新
 ### 1.0版本
 * 支持hook接口，当填写的类为接口时，默认会hook所有实现的子类
@@ -95,3 +112,8 @@ agent所捕获的Hook的所有类名
 
 * 增加交互式的hook操作
 * 增加方法执行前后的修改
+
+### 2.1版本
+
+* 可以增加方法执行前后静态方法执行参数
+* 增加方法执行前后，直接return

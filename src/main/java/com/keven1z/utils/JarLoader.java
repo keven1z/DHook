@@ -112,7 +112,6 @@ public class JarLoader implements Opcodes {
             in.close();
             jos.closeEntry();
         }
-        byteArrayOutputStream.toByteArray();
         jos.close();
         jf.close();
         return byteArrayOutputStream.toByteArray();

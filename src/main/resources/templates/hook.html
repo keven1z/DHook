@@ -73,12 +73,12 @@
 </ul>
 <div id="myTabContent" class="tab-content">
     <div class="modal fade" id="add_hook_dialog" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
+        <div class="modal-dialog"  >
+            <div class="modal-content" style="width: 650px;">
                 <div class="modal-header">
                     <h4 class="modal-title">添加hook点</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" >
                     <form id="hook_form" action="/hook/add" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon">ClassName</span>
@@ -316,11 +316,13 @@
                 let className = node.children[1].value;
                 let method = node.children[2].value;
                 let desc = node.children[3].value;
+                let parameters = node.children[4].value;
                 methods.push(
                     {
                         "className": className,
                         "methodName": method,
                         "desc": desc,
+                        "parameters":parameters,
                         "index": i
                     }
                 );
@@ -389,11 +391,13 @@
     function addMethod(id) {
         var content = `<div class="input-group method" style="padding-left: 10px">
                                 <span class="input-group-addon">静态方法</span>
-                                <input type="text"  style="width: 37.5%" class="form-control"  name="className" placeholder="class name"
+                                <input type="text"  style="width: 35%" class="form-control"  name="className" placeholder="class name"
                                        aria-describedby="basic-addon1">
-                                <input type="text" style="width: 25%" class="form-control" name="method" placeholder="method"
+                                <input type="text" style="width: 20%" class="form-control" name="method" placeholder="method"
                                        aria-describedby="basic-addon2">
-                                <input type="text" style="width: 37.5%" class="form-control" name="desc" placeholder="desc"
+                                <input type="text" style="width: 20%" class="form-control" name="desc" placeholder="desc"
+                                       aria-describedby="basic-addon2">
+                                <input type="text" style="width: 25%" class="form-control" name="parameter" placeholder="参数"
                                        aria-describedby="basic-addon2">
                             </div>`;
         var fieldForm = $("#" + id);

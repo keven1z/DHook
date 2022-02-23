@@ -1,16 +1,16 @@
 package com.keven1z.utils;
 
+
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
 
 /**
  * @author keven1z
@@ -19,20 +19,21 @@ import java.util.List;
 public class JarUtil {
     /**
      * 修改agent中的@className的@fieldName
-     * @param className 待更新field的类名
-     * @param fieldName 待更新field的name
+     *
+     * @param className  待更新field的类名
+     * @param fieldName  待更新field的name
      * @param fieldValue 待更新field的value
      * @return 修改后agent的路径
      */
-    public static byte[] updateField(String className, String fieldName, String fieldValue) throws Exception{
+    public static byte[] updateField(String className, String fieldName, String fieldValue) throws Exception {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("agent/dHook.jar");
         Resource resource = resources[0];
-//        File file = resource.getFile();
+        File file = resource.getFile();
         InputStream inputStream = resource.getInputStream();
         String tmpAgent = System.getProperty("java.io.tmpdir") + File.separator + "dHook.jar";
         File agent = new File(tmpAgent);
-        CommonUtils.copy(inputStream,agent);
+        CommonUtils.copy(inputStream, agent);
 
         List<ClassNode> classNodes = JarLoader.loadJar(agent);
 
@@ -54,8 +55,49 @@ public class JarUtil {
         return JarLoader.saveToJar(agent, changeNodes);
     }
 
-    public static void main(String[] args) throws Exception {
-        byte[] bytes = JarUtil.updateField("cn/com/x1001/hook/HookConsts", "REGISTER_ID", "id");
-        System.out.println(bytes.length);
+    public static byte[] updateConfig(String value) throws IOException {
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resolver.getResources("agent/dHook.jar");
+        Resource resource = resources[0];
+        String tmpAgent = System.getProperty("java.io.tmpdir") + File.separator + "dHook.jar";
+        File agent = new File(tmpAgent);
+        CommonUtils.copy(resource.getInputStream(), agent);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+//            CommonUtils.copy(jarFile, tmpJarFile);
+        JarFile jf = new JarFile(agent);
+        JarOutputStream jos = new JarOutputStream(byteArrayOutputStream);
+        Enumeration<JarEntry> entries = jf.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry jarEntry = entries.nextElement();
+            String entryName = jarEntry.getName();
+            InputStream in = jf.getInputStream(jarEntry);
+            if (entryName.equals("cn/com/x1001/config.properties")){
+                jarEntry = new JarEntry(entryName);
+                jos.putNextEntry(jarEntry);
+                Properties properties = new Properties();
+                properties.setProperty("register_id", value);
+                properties.load(in);
+                properties.store(jos, null);
+            }
+            else {
+                jos.putNextEntry(jarEntry);
+                CommonUtils.inputStreamToOutputStream(in, jos);
+            }
+            jos.closeEntry();
+            in.close();
+        }
+        jos.close();
+        jf.close();
+        byteArrayOutputStream.writeTo(new FileOutputStream(agent));
+        return byteArrayOutputStream.toByteArray();
     }
+
+
+//    public static void main(String[] args) throws Exception {
+////        byte[] bytes = JarUtil.updateField("cn/com/x1001/Config", "registerID", "registerID");
+//        byte[] bytes = updateConfig("aaaa");
+//        System.out.println(bytes.length);
+//        int c= 999;
+//    }
 }

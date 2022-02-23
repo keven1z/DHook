@@ -79,7 +79,7 @@ public class AgentController {
         String fileName = "dHook.jar";
         byte[] jar_new;
         try {
-            jar_new = JarUtil.updateField("cn/com/x1001/hook/HookConsts", "REGISTER_ID", id);
+            jar_new = JarUtil.updateConfig(id);
         } catch (Exception e) {
             logger.error("导出agent失败:"+e.getMessage());
             return ResponseEntity.badRequest().body("0");
