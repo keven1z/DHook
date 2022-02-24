@@ -7,8 +7,9 @@ DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技
 ## 快速开始
 
 ### 启动DHookServer
-1. 下载最新的`DHookServer-[release-version].jar`和`DHook.sqlite`,放在同一目录
-2. 运行`java -jar DHookServer-[release-version].jar`
+1. `git clone https://github.com/keven1z/DHook.git`
+2. 运行`mvn clean package`
+3. 运行`java -jar DHookServer-[release-version].jar`
 
 启动界面如下：
 ```
