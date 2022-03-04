@@ -65,20 +65,20 @@
             <li><a th:href="@{/hook/export(id=${id})}" th:target="_blank" tabindex="-1">
                 导出Hook</a>
             </li>
-            <li><a href="#jmeter" tabindex="-1" data-toggle="tab">
-                生成agent</a>
+            <li><a th:href="@{/hook/export-offline(id=${id})}" th:target="_blank" tabindex="-1">
+                导出agent</a>
             </li>
         </ul>
     </li>
 </ul>
 <div id="myTabContent" class="tab-content">
     <div class="modal fade" id="add_hook_dialog" role="dialog">
-        <div class="modal-dialog"  >
+        <div class="modal-dialog">
             <div class="modal-content" style="width: 650px;">
                 <div class="modal-header">
                     <h4 class="modal-title">添加hook点</h4>
                 </div>
-                <div class="modal-body" >
+                <div class="modal-body">
                     <form id="hook_form" action="/hook/add" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon">ClassName</span>
@@ -167,7 +167,7 @@
                     data-target="#add_hook_dialog">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
             </button>
-            <button id="btn_edit" type="button" class="btn btn-default" >
+            <button id="btn_edit" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
             </button>
             <button id="btn_delete" type="button" class="btn btn-default" onclick="del_hook()">
@@ -282,14 +282,14 @@
 
     function del_hook() {
         let selected = $(".selected");
-        if (selected.length === 0){
+        if (selected.length === 0) {
             alert("未选择删除的hook点");
             return;
         }
 
         let id = selected.children("td")[1].innerHTML;
         $.ajax({
-            url: "/hook/del?hookId="+id,
+            url: "/hook/del?hookId=" + id,
             type: "get",
             success: function (data) {
                 refresh();
@@ -322,7 +322,7 @@
                         "className": className,
                         "methodName": method,
                         "desc": desc,
-                        "parameters":parameters,
+                        "parameters": parameters,
                         "index": i
                     }
                 );
@@ -375,33 +375,47 @@
         })
 
     });
+    index = 0;
 
     function addField(id) {
-        var content = `<div class="input-group field" style="padding-left: 10px">
+        var content = `<div class="input-group field" style="padding-left: 10px" id="content${index}" >
                                 <span class="input-group-addon">参数</span>
-                                <input type="text"  style="width: 50%" class="form-control"  placeholder="参数名"
+                                <input type="text"  style="width: 45%" class="form-control"  placeholder="参数名"
                                        aria-describedby="basic-addon1">
                                 <input type="text" style="width: 50%" class="form-control" placeholder="参数值"
                                        aria-describedby="basic-addon2">
+                                <a href="javascript:remove('content${index}')" style="width: 5%">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
                             </div>`;
+        index++;
         var fieldForm = $("#" + id);
         fieldForm.append(content);
     }
 
     function addMethod(id) {
-        var content = `<div class="input-group method" style="padding-left: 10px">
+        var content = `<div class="input-group method" style="padding-left: 10px" id="content${index}">
                                 <span class="input-group-addon">静态方法</span>
                                 <input type="text"  style="width: 35%" class="form-control"  name="className" placeholder="class name"
                                        aria-describedby="basic-addon1">
-                                <input type="text" style="width: 20%" class="form-control" name="method" placeholder="method"
+                                <input type="text" style="width: 15%" class="form-control" name="method" placeholder="method"
                                        aria-describedby="basic-addon2">
                                 <input type="text" style="width: 20%" class="form-control" name="desc" placeholder="desc"
                                        aria-describedby="basic-addon2">
                                 <input type="text" style="width: 25%" class="form-control" name="parameter" placeholder="参数"
                                        aria-describedby="basic-addon2">
+                                <a href="javascript:remove('content${index}')" style="width: 5%">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
                             </div>`;
-        var fieldForm = $("#" + id);
+        index++;
+        let fieldForm = $("#" + id);
         fieldForm.append(content);
+    }
+
+    function remove(id) {
+        let d = $("#" + id);
+        d.remove();
     }
 </script>
 <script>

@@ -1,4 +1,4 @@
-# DHook ![2.1 (shields.io)](https://img.shields.io/badge/2.1-brightgreen.svg)
+# DHook ![2.1 (shields.io)](https://img.shields.io/badge/2.2-brightgreen.svg)
 DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技术对运行时的java应用进行字节码修改，并可以配置文件的方式来增加hook点，修改执行方法的返回值以及参数等。
 
 ## 兼容性
@@ -7,7 +7,7 @@ DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技
 ## 快速开始
 
 ### 启动DHookServer
-1. `git clone https://github.com/keven1z/DHook.git`
+1. `git clone https://github.com/keven1z/DHook.git`，或者下载release包
 2. 运行`mvn clean package`
 3. 运行`java -jar DHookServer-[release-version].jar`
 
@@ -80,6 +80,14 @@ agent启动成功会看到如上标志，并且可以在页面看到状态变为
 
 agent所捕获的Hook的所有类名
 
+### 功能
+#### 导出配置
+将会导出hook点的信息的json文件
+
+#### 导出agent
+将会导出包含hook点的agent，该agent不与服务端绑定，去除了多余的api调用，仅作用hook点的修改，体积很小。
+
+
 ### 案例
 
 以破解cs4.4为例，我们已知破解cs 需要修改`common/Authorization`中的以下参数：
@@ -118,3 +126,7 @@ agent所捕获的Hook的所有类名
 
 * 可以增加方法执行前后静态方法执行参数
 * 增加方法执行前后，直接return
+
+### 2.2版本
+
+* 增加导出仅包含hook点信息的agent

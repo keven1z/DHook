@@ -75,7 +75,7 @@ public class AgentController {
      * @return
      */
     @GetMapping("/export")
-    public ResponseEntity<Object> export(@RequestParam(value = "id") String id, HttpServletResponse response) throws FileNotFoundException {
+    public ResponseEntity<Object> export(@RequestParam(value = "id") String id, HttpServletResponse response)  {
         String fileName = "dHook.jar";
         byte[] jar_new;
         try {
