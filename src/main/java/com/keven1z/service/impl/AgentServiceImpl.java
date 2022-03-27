@@ -45,5 +45,10 @@ public class AgentServiceImpl implements IAgentService {
         return agentDao.update(agentEntity);
     }
 
+    @Override
+    public int delete(String agentId) {
+        return agentDao.delete(agentId);
+    }
+
 
 }

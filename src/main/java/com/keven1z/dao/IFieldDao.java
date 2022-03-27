@@ -21,6 +21,6 @@ public interface IFieldDao {
             "VALUES (#{name},#{type},#{value},#{maId},#{sort})"})
     @Options(useGeneratedKeys=true, keyProperty="fieldId")
     int insert(FieldEntity fieldEntity);
-    @Delete("DELETE FROM field WHERE ma_id = ${maId}")
+    @Delete("DELETE FROM field WHERE ma_id = #{maId}")
     int delete(int maId);
 }

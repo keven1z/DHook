@@ -29,6 +29,6 @@ public interface IMethodActionDao {
     @Options(useGeneratedKeys=true, keyProperty="maId")
     int insert(MethodActionEntity methodAction);
 
-    @Delete("DELETE FROM method_action WHERE hook_id = ${hookId}")
+    @Delete("DELETE FROM method_action WHERE hook_id = #{hookId}")
     int delete(int hookId);
 }

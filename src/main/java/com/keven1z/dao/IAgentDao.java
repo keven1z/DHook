@@ -19,4 +19,6 @@ public interface IAgentDao {
 
     @Update({ "update agent set time = #{time},state = #{state},javaVersion=#{javaVersion},os=#{os},bind_process_name=#{bindProcessName} where id = #{id}" })
     int update(AgentEntity agentEntity);
+    @Delete("DELETE FROM agent WHERE id = #{agentId}")
+    int delete(String agentId);
 }

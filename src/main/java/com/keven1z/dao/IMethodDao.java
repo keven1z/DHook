@@ -24,6 +24,6 @@ public interface IMethodDao {
     @Options(useGeneratedKeys=true, keyProperty="methodId")
     int insert(MethodEntity methodEntity);
 
-    @Delete("DELETE FROM method WHERE ma_id = ${maId}")
+    @Delete("DELETE FROM method WHERE ma_id = #{maId}")
     int delete(int maId);
 }

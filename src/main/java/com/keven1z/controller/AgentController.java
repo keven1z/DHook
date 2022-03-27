@@ -42,6 +42,13 @@ public class AgentController {
         return agentEntities;
     }
     /*
+     * 删除agent
+     */
+    @GetMapping("/del")
+    public int del(String agentId){
+        return agentService.delete(agentId);
+    }
+    /*
      * 注册agent
      */
     @PostMapping("/register")

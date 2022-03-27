@@ -1,4 +1,4 @@
-# DHook ![2.1 (shields.io)](https://img.shields.io/badge/2.2-brightgreen.svg)
+# DHook ![2.2.1 (shields.io)](https://img.shields.io/badge/2.2.1-brightgreen.svg)
 DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技术对运行时的java应用进行字节码修改，并可以配置文件的方式来增加hook点，修改执行方法的返回值以及参数等。
 
 ## 兼容性

@@ -49,6 +49,6 @@ public interface IHookDao {
     })
     List<HookEntity> findHooksByAgentId(String agentId);
 
-    @Delete("DELETE FROM hook WHERE id = ${id}")
+    @Delete("DELETE FROM hook WHERE id = #{id}")
     int delete(int id);
 }
