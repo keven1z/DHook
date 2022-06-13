@@ -13,9 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -100,5 +98,6 @@ public class HookController {
                 .body(resource);
         return responseEntity;
     }
+
 
 }

@@ -3,10 +3,13 @@ package com.keven1z.controller;
 import com.keven1z.entity.AgentEntity;
 import com.keven1z.service.IAgentService;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.SerializationUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author keven1z
@@ -19,7 +22,6 @@ public class IndexController {
     public IAgentService agentService;
     /**
      * 推送给所有用户
-     * @return
      */
     @GetMapping("/index.html")
     public String index(){
@@ -32,5 +34,9 @@ public class IndexController {
         request.setAttribute("applicationName",agentById.getName());
         return "hook";
     }
+    @GetMapping("/get-plugins")
+    public void getPlugins(HttpServletResponse response) throws IOException {
 
+
+    }
 }
