@@ -17,7 +17,7 @@ import java.io.IOException;
 @MapperScan(basePackages = {"com.keven1z.dao"})
 public class DHookServerApplication  implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-
+    private static final PluginUtil pluginUtil = new PluginUtil();
     @Resource
     NettyServer nettyServer;
     public static void main(String[] args) {
@@ -29,8 +29,7 @@ public class DHookServerApplication  implements CommandLineRunner {
         int port = 7070;
         ChannelFuture future = nettyServer.start("localhost", port);
         /* 加载插件*/
-        PluginUtil.initPlugins();
-
+//        pluginUtil.initPlugins();
         if (future.isSuccess()){
             logger.info("Netty started on port(s): "+port);
         }

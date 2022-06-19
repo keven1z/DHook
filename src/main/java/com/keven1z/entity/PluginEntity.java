@@ -5,18 +5,9 @@ package com.keven1z.entity;
  * @date 2022/04/20
  */
 public class PluginEntity {
-    private int id;
     private String pluginName;
-    private String desc;
     private String fileName;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private String desc;
 
     public String getPluginName() {
         return pluginName;
@@ -26,19 +17,19 @@ public class PluginEntity {
         this.pluginName = pluginName;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
     public String getFileName() {
         return fileName;
     }
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

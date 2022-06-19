@@ -43,7 +43,8 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap-treeview.min.js}"></script>
     <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
-
+    <script type="text/javascript" th:src="@{/js/hook.js}"></script>
+    <script type="text/javascript" th:src="@{/js/plugin.js}"></script>
 
 </head>
 <body>
@@ -53,13 +54,12 @@
     </h1>
 
 </div>
-
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
         <a href="#home" data-toggle="tab">Hook</a>
     </li>
     <li><a href="#classmap" data-toggle="tab" onclick="load_classMap()">类图</a></li>
-    <li><a href="#plugins-tab" data-toggle="tab" >插件</a></li>
+    <li><a href="#plugins-tab" data-toggle="tab">插件</a></li>
 
     <li class="dropdown ">
         <a href="#" id="myTabDrop1" data-toggle="dropdown">功能 <b class="caret"></b>
@@ -74,10 +74,11 @@
         </ul>
     </li>
 </ul>
+<!-- hook点新增弹框 end-->
 
 <!-- tab content start-->
 <div id="myTabContent" class="tab-content">
-    <!-- add hook start-->
+    <!-- hook点新增弹框 start-->
     <div class="modal fade" id="add_hook_dialog" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content" style="width: 650px;">
@@ -153,7 +154,8 @@
             </div>
         </div>
     </div>
-    <!-- add hook end-->
+    <!-- hook点新增弹框 end-->
+
     <!-- classmap start-->
     <div class="tab-pane fade" id="classmap">
 
@@ -170,6 +172,8 @@
     </div>
 
     <!-- classmap end-->
+
+    <!-- home start-->
     <div class="tab-pane fade in active" id="home">
         <div id="toolbar" class="btn-group">
             <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal"
@@ -185,137 +189,56 @@
         </div>
         <table id="tb_departments"></table>
     </div>
+    <!-- home end-->
+
     <div class="tab-pane fade" id="plugins-tab">
         <div id="plugin_toolbar" class="btn-group">
             <button id="plugin_add" type="button" class="btn btn-default" data-toggle="modal"
-                    data-target="#add_app">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                    data-target="#add_plugin_dialog">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>导入插件
             </button>
         </div>
         <table id="plugin_departments"></table>
+        <!-- 添加 插件对话框 start-->
+        <div class="modal fade" id="add_plugin_dialog" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width: 650px;">
+                    <div class="modal-header">
+                        <h4 class="modal-title">添加hook点</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id="plugin_form" enctype="multipart/form-data" action="/plugin/add" method="POST">
+                            <div class="input-group">
+                                <span class="input-group-addon">插件</span>
+                                <input type="file" id="plugin_file" name="plugin" class="form-control" aria-describedby="basic-addon1">
+                            </div>
+                        </form>
+
+
+                    </div>
+                    <div class="alert alert-danger hide" id="plugin_warn_div">
+                        <strong>加载错误!</strong> <span id="plugin_warn"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="add_plugin_button" class="btn btn-default">添加插件</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- 添加 插件对话框 end-->
+
     </div>
-<!--    <div class="tab-pane fade" id="ejb">-->
-<!--        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。-->
-<!--        </p>-->
-<!--    </div>-->
 </div>
 <!-- tab content end-->
-
 
 
 <script>
 
 </script>
 <script>
-    $(function () {
-        //1.初始化Table
-        var oTable = new TableInit();
-        oTable.Init();
-
-    });
-
-// home页面列表 start
-    var TableInit = function () {
-        var oTableInit = new Object();
-        //初始化Table
-        oTableInit.Init = function () {
-            $('#tb_departments').bootstrapTable({
-                url: '/hook/find',         //请求后台的URL（*）
-                method: 'get',                      //请求方式（*）
-                dataType: 'json',
-                toolbar: '#toolbar',                //工具按钮用哪个容器
-                theadClasses: '.thead-light',
-                striped: true,                      //是否显示行间隔色
-                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-                pagination: true,                   //是否显示分页（*）
-                showPaginationSwitch: false,        //是否显示分页数
-                sortable: false,                     //是否启用排序
-                sortName: "title",                     //是否启用排序
-                sortOrder: "desc",                   //排序方式
-                queryParams: oTableInit.queryParams,//传递参数（*）
-                queryParamsType: '',                //如果要在oTableInit.queryParams方法获取pageNumber和pageSize的值，需要将此值设置为空字符串（*）
-                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
-                pageNumber: 1,                       //初始化加载第一页，默认第一页
-                pageSize: 10,                       //每页的记录行数（*）
-                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
-                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
-                strictSearch: true,
-                showColumns: true,                  //是否显示所有的列
-                showRefresh: true,                  //是否显示刷新按钮
-                minimumCountColumns: 2,             //最少允许的列数
-                clickToSelect: true,                //是否启用点击选中行
-                singleSelect: true,                 //是否单选模式
-                height: $(window).height() - 200,   //table总高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
-                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
-                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
-                cardView: false,                    //是否显示详细视图
-                detailView: false,                   //是否显示父子表
-                paginationPreText: "上一页",
-                paginationNextText: "下一页",
-                onClickRow: function (row, $element) {
-                    console.log("click:" + row["id"])
-                },
-                columns: [
-                    {
-                        checkbox: true,
-                        align: 'center',
-                        valign: 'middle'
-                    }, {
-                        field: 'id',
-                        title: 'id'
-                    }, {
-                        field: 'className',
-                        title: '类名'
-                    }, {
-                        field: 'method',
-                        title: '方法'
-                    }, {
-                        field: 'desc',
-                        title: '描述符'
-                    }, {
-                        field: 'returnValue',
-                        title: '返回值',
-                    },]
-            });
-        };
-        oTableInit.queryParams = function (params) {
-            // alert(JSON.stringify(params));
-            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-                id: $("#small").text(),
-                // statu: $("#txt_search_statu").val()
-            };
-            return temp;
-        };
-        return oTableInit;
-    };
-
-    function refresh() {
-        $('#tb_departments').bootstrapTable('refresh', {
-            query: {
-                pageNumber: 1
-            }
-        });
-    }
-
-    function del_hook() {
-        let selected = $(".selected");
-        if (selected.length === 0) {
-            alert("未选择删除的hook点");
-            return;
-        }
-
-        let id = selected.children("td")[1].innerHTML;
-        $.ajax({
-            url: "/hook/del?hookId=" + id,
-            type: "get",
-            success: function (data) {
-                refresh();
-            },
-            error: function () {
-            }
-        });
-    }
-    // home页面end
 
     function getOnMethodAction(id) {
         let type;
@@ -362,6 +285,32 @@
             "fields": fields
         };
     }
+    $('#add_plugin_button').click(function () {
+        var formData = new FormData();
+        // 获取文件
+        var fileData = $("#plugin_file").prop("files")[0];
+        formData.append("plugin", fileData);
+        $.ajax({
+            url: '/plugin/add',
+            type: 'POST',
+            async: false,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                refresh();
+                setTimeout(function () {
+                    $('#add_plugin_dialog').modal('hide');
+                }, 200);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+                $('#plugin_warn').text(jqXHR.responseText);
+                $('#plugin_warn_div').removeClass('hide');
+            }
+        });
+    });
 
     $('#addHook').click(function () {
         let url = '/hook/add';
@@ -369,7 +318,6 @@
             getOnMethodAction("onMethodEnter"),
             getOnMethodAction("onMethodExit")
         ]
-        console.log(onMethodAction);
         $.ajax({
             //async:false,非异步，modal窗口失效；
             async: true,
@@ -476,6 +424,7 @@
     }
 
 </script>
+
 
 </body>
 

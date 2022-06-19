@@ -13,5 +13,5 @@ import java.util.List;
 public interface IPluginService {
     void insert(PluginEntity pluginEntity);
     List<PluginEntity> queryAll();
-    int delete(String agentId);
+    int delete(String pluginName);
 }

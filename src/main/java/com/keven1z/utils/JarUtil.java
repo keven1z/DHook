@@ -1,6 +1,9 @@
 package com.keven1z.utils;
 
 
+import dHook.DefaultDHookExtenderCallbacks;
+import dHook.IDHookExtender;
+import dHook.IDHookExtenderCallbacks;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.springframework.core.io.Resource;
@@ -8,6 +11,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -145,6 +151,13 @@ public class JarUtil {
             }
         }
         return plugins;
+    }
+    public static IDHookExtenderCallbacks loadJar(String path) throws InstantiationException, IllegalAccessException, MalformedURLException, ClassNotFoundException {
+        Class<?> loadClass = new URLClassLoader(new URL[]{new URL(path)}).loadClass("dHook.DHookExtender");
+        IDHookExtender dHookExtender =(IDHookExtender)loadClass.newInstance();
+        IDHookExtenderCallbacks extenderCallbacks = new DefaultDHookExtenderCallbacks();
+        dHookExtender.registerExtenderCallbacks(extenderCallbacks);
+        return extenderCallbacks;
     }
     public static void main(String[] args) throws Exception {
 //        byte[] bytes = JarUtil.updateField("cn/com/x1001/Config", "registerID", "registerID");

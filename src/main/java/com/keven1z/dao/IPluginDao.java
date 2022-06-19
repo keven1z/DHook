@@ -15,12 +15,12 @@ public interface IPluginDao {
     @Result(id = true,column = "plugin_name",property = "pluginName")
     @Result(column = "file_name",property = "fileName")
     List<PluginEntity> queryAll();
-    @Insert({"INSERT INTO plugins(id, plugin_name, desc, file_name) ",
-            "VALUES (#{id},#{pluginName},#{desc},#{fileName})"})
+    @Insert({"INSERT OR REPLACE INTO plugins(plugin_name, file_name,desc) ",
+            "VALUES (#{pluginName},#{fileName},#{desc})"})
     void insert(PluginEntity pluginEntity);
 
 //    @Update({ "update agent set time = #{time},state = #{state},javaVersion=#{javaVersion},os=#{os},bind_process_name=#{bindProcessName} where id = #{id}" })
 //    int update(PluginEntity pluginEntity);
-    @Delete("DELETE FROM plugins WHERE id = #{id}")
-    int delete(String id);
+    @Delete("DELETE FROM plugins WHERE plugin_name = #{pluginName}")
+    int delete(String pluginName);
 }

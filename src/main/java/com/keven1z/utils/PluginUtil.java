@@ -1,9 +1,14 @@
 package com.keven1z.utils;
 
+import com.keven1z.controller.HookController;
+import com.keven1z.entity.PluginEntity;
 import com.keven1z.service.IPluginService;
 import dHook.DefaultDHookExtenderCallbacks;
 import dHook.IDHookExtender;
 import dHook.IDHookExtenderCallbacks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -18,7 +23,10 @@ import java.util.Map;
  * @author keven1z
  * @date 2022/06/16
  */
+@Component
 public class PluginUtil {
+    private static final Logger logger = LoggerFactory.getLogger(PluginUtil.class);
+
     @Resource
     private IPluginService pluginService;
     public static PluginUtil pluginUtil;
@@ -30,22 +38,38 @@ public class PluginUtil {
 
     public static Map<String, String> pluginJarMap = new HashMap<>();
 
-    public static void initPlugins() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    @PostConstruct
+    public  void initPlugins() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        Map<String, String> pluginMap = getPluginMap();
+        for (Map.Entry<String, String> entry : pluginMap.entrySet()) {
+            PluginEntity pluginEntity = new PluginEntity();
+            pluginEntity.setFileName(entry.getValue());
+            pluginEntity.setPluginName(entry.getKey());
+            try {
+                IDHookExtenderCallbacks extenderCallbacks = JarUtil.loadJar("file:" + entry.getValue());
+                pluginEntity.setDesc(extenderCallbacks.getExtensionDesc());
+                pluginService.insert(pluginEntity);
+            }
+            catch (Exception e){
+                logger.warn("加载插件失败,插件名："+entry.getKey()+"");
+            }
+
+        }
+//        for (Map.Entry<String, String> entry : map.entrySet()) {
+//            Class<?> loadClass = new URLClassLoader(new URL[]{new URL("file:"+entry.getValue())}).loadClass("dHook.DHookExtender");
+//            IDHookExtender dHookExtender =(IDHookExtender)loadClass.newInstance();
+//            IDHookExtenderCallbacks extenderCallbacks = new DefaultDHookExtenderCallbacks();
+//            dHookExtender.registerExtenderCallbacks(extenderCallbacks);
+//            System.out.println(extenderCallbacks.getExtensionHooks());
+//        }
+    }
+    public static  Map<String, String> getPluginMap() throws IOException {
         File file = new File("");
         String filePath = file.getCanonicalPath();
         String plugins_path = filePath + File.separator + "plugins";
-
-        Map<String, String> map = JarUtil.searchPluginJar(plugins_path);
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            Class<?> loadClass = new URLClassLoader(new URL[]{new URL("file:"+entry.getValue())}).loadClass("dHook.DHookExtender");
-            IDHookExtender dHookExtender =(IDHookExtender)loadClass.newInstance();
-            IDHookExtenderCallbacks extenderCallbacks = new DefaultDHookExtenderCallbacks();
-            dHookExtender.registerExtenderCallbacks(extenderCallbacks);
-            System.out.println(extenderCallbacks.getExtensionHooks());
-        }
+        return JarUtil.searchPluginJar(plugins_path);
     }
-
     public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        initPlugins();
+//        initPlugins();
     }
 }
