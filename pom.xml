@@ -71,6 +71,11 @@
             <version>3.36.0.3</version>
         </dependency>
         <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>7.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
@@ -115,6 +120,29 @@
                                     <directory>./</directory>
                                     <includes>
                                         <include>*.sqlite</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-plugins</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/plugins</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./plugins</directory>
+                                    <includes>
+                                        <include>*.jar</include>
                                     </includes>
                                 </resource>
                             </resources>

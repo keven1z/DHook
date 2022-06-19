@@ -2,6 +2,7 @@ package com.keven1z.controller;
 
 import com.keven1z.entity.AgentEntity;
 import com.keven1z.service.IAgentService;
+import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
 import com.keven1z.utils.UUidUtil;
 import org.slf4j.Logger;
@@ -93,18 +94,7 @@ public class AgentController {
         }
         InputStreamResource resource = new InputStreamResource (new ByteArrayInputStream(jar_new));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add ( "Content-Disposition",String.format("attachment;filename=\"%s\"",fileName));
-        headers.add ( "Cache-Control","no-cache,no-store,must-revalidate" );
-        headers.add ( "Pragma","no-cache" );
-        headers.add ( "Expires","0" );
-
-        ResponseEntity<Object> responseEntity = ResponseEntity.ok()
-                .headers ( headers )
-                .contentLength ( jar_new.length)
-                .contentType(MediaType.parseMediaType ( "application/java-archive" ))
-                .body(resource);
-        return responseEntity;
+        return HttpUtil.responseSource(fileName, resource, jar_new.length);
     }
 
 }

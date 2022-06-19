@@ -53,11 +53,14 @@
     </h1>
 
 </div>
+
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
         <a href="#home" data-toggle="tab">Hook</a>
     </li>
-    <li><a href="#classmap" data-toggle="tab" onclick="load_classMap()">classMap</a></li>
+    <li><a href="#classmap" data-toggle="tab" onclick="load_classMap()">类图</a></li>
+    <li><a href="#plugins-tab" data-toggle="tab" >插件</a></li>
+
     <li class="dropdown ">
         <a href="#" id="myTabDrop1" data-toggle="dropdown">功能 <b class="caret"></b>
         </a>
@@ -66,12 +69,15 @@
                 导出Hook</a>
             </li>
             <li><a th:href="@{/hook/export-offline(id=${id})}" th:target="_blank" tabindex="-1">
-                导出agent</a>
+                导出Agent</a>
             </li>
         </ul>
     </li>
 </ul>
+
+<!-- tab content start-->
 <div id="myTabContent" class="tab-content">
+    <!-- add hook start-->
     <div class="modal fade" id="add_hook_dialog" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content" style="width: 650px;">
@@ -147,7 +153,8 @@
             </div>
         </div>
     </div>
-
+    <!-- add hook end-->
+    <!-- classmap start-->
     <div class="tab-pane fade" id="classmap">
 
         <div class="row">
@@ -161,6 +168,8 @@
             </div>
         </div>
     </div>
+
+    <!-- classmap end-->
     <div class="tab-pane fade in active" id="home">
         <div id="toolbar" class="btn-group">
             <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal"
@@ -176,18 +185,26 @@
         </div>
         <table id="tb_departments"></table>
     </div>
-    <div class="tab-pane fade" id="jmeter">
-        <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
+    <div class="tab-pane fade" id="plugins-tab">
+        <div id="plugin_toolbar" class="btn-group">
+            <button id="plugin_add" type="button" class="btn btn-default" data-toggle="modal"
+                    data-target="#add_app">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+            </button>
+        </div>
+        <table id="plugin_departments"></table>
     </div>
-    <div class="tab-pane fade" id="ejb">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
-    </div>
+<!--    <div class="tab-pane fade" id="ejb">-->
+<!--        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。-->
+<!--        </p>-->
+<!--    </div>-->
 </div>
+<!-- tab content end-->
+
+
+
 <script>
-    // $(function () {
-    //     $('#myTab li:eq(1) a').tab('show');
-    // });
+
 </script>
 <script>
     $(function () {
@@ -197,7 +214,7 @@
 
     });
 
-
+// home页面列表 start
     var TableInit = function () {
         var oTableInit = new Object();
         //初始化Table
@@ -298,6 +315,7 @@
             }
         });
     }
+    // home页面end
 
     function getOnMethodAction(id) {
         let type;

@@ -190,6 +190,7 @@
             }
         });
     }
+
     function del_hook() {
         let selected = $(".selected");
         if (selected.length === 0) {
@@ -208,6 +209,7 @@
             }
         });
     }
+
     function export_agent(id) {
         let url = "/agent/export?id=" + id;
         window.open(url, '_blank');

@@ -34,9 +34,5 @@ public class IndexController {
         request.setAttribute("applicationName",agentById.getName());
         return "hook";
     }
-    @GetMapping("/get-plugins")
-    public void getPlugins(HttpServletResponse response) throws IOException {
 
-
-    }
 }

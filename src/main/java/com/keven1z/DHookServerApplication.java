@@ -1,5 +1,6 @@
 package com.keven1z;
 
+import com.keven1z.utils.PluginUtil;
 import io.netty.channel.ChannelFuture;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 @SpringBootApplication
 @MapperScan(basePackages = {"com.keven1z.dao"})
@@ -22,10 +24,13 @@ public class DHookServerApplication  implements CommandLineRunner {
         SpringApplication.run(DHookServerApplication.class, args);
     }
     @Override
-    public void run(String... args) throws InterruptedException {
+    public void run(String... args) throws InterruptedException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         // 开启服务
         int port = 7070;
         ChannelFuture future = nettyServer.start("localhost", port);
+        /* 加载插件*/
+        PluginUtil.initPlugins();
+
         if (future.isSuccess()){
             logger.info("Netty started on port(s): "+port);
         }
@@ -37,5 +42,6 @@ public class DHookServerApplication  implements CommandLineRunner {
             }
         });
         future.channel().closeFuture().sync();
+
     }
 }

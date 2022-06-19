@@ -1,7 +1,7 @@
 
 package com.keven1z.netty;
 
-import com.keven1z.AgentUtil;
+import com.keven1z.utils.AgentUtil;
 import com.keven1z.entity.AgentEntity;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

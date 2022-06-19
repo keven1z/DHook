@@ -6,6 +6,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+
 import java.io.*;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -72,15 +73,14 @@ public class JarUtil {
             JarEntry jarEntry = entries.nextElement();
             String entryName = jarEntry.getName();
             InputStream in = jf.getInputStream(jarEntry);
-            if (entryName.equals("cn/com/x1001/config.properties")){
+            if (entryName.equals("cn/com/x1001/config.properties")) {
                 jarEntry = new JarEntry(entryName);
                 jos.putNextEntry(jarEntry);
                 Properties properties = new Properties();
                 properties.setProperty("register_id", value);
                 properties.load(in);
                 properties.store(jos, null);
-            }
-            else {
+            } else {
                 jos.putNextEntry(jarEntry);
                 CommonUtils.inputStreamToOutputStream(in, jos);
             }
@@ -92,6 +92,7 @@ public class JarUtil {
         byteArrayOutputStream.writeTo(new FileOutputStream(agent));
         return byteArrayOutputStream.toByteArray();
     }
+
     public static byte[] updateHook(String json) throws IOException {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("agent/dHook-offline.jar");
@@ -110,14 +111,13 @@ public class JarUtil {
             JarEntry jarEntry = entries.nextElement();
             String entryName = jarEntry.getName();
             InputStream in = jf.getInputStream(jarEntry);
-            if (entryName.equals("cn/com/x1001/hook.json")){
+            if (entryName.equals("cn/com/x1001/hook.json")) {
                 jarEntry = new JarEntry(entryName);
                 jos.putNextEntry(jarEntry);
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(jos));
                 bufferedWriter.write(json);
                 bufferedWriter.flush();
-            }
-            else {
+            } else {
                 jos.putNextEntry(jarEntry);
                 CommonUtils.inputStreamToOutputStream(in, jos);
             }
@@ -130,12 +130,28 @@ public class JarUtil {
         return byteArrayOutputStream.toByteArray();
     }
 
+    public static Map<String, String> searchPluginJar(String dir_path) {
+        HashMap<String, String> plugins = new HashMap<>();
+        File dir = new File(dir_path);
+        if (!dir.isDirectory()) return plugins;
 
+        String[] children = dir.list();
+        for (int i = 0; i < children.length; i++) {
+            String plugin = children[i];
+            if (plugin.endsWith(".jar")) {
+                String plugin_path = dir_path + File.separator + plugin;
+                String plugin_name = plugin.substring(0, plugin.lastIndexOf(".jar"));
+                plugins.put(plugin_name, plugin_path);
+            }
+        }
+        return plugins;
+    }
     public static void main(String[] args) throws Exception {
 //        byte[] bytes = JarUtil.updateField("cn/com/x1001/Config", "registerID", "registerID");
 //        byte[] bytes = updateConfig("aaaa");
 //        System.out.println(bytes.length);
 //        int c= 999;
 //        updateHook("[{\"className\":\"common/Authorization\",\"method\":\"\\u003cinit\\u003e\",\"desc\":\"()V\",\"returnValue\":\"\",\"onMethodAction\":[{\"type\":1,\"fields\":[{\"name\":\"validto\",\"value\":\"forever\",\"sort\":0},{\"name\":\"valid\",\"value\":\"true\",\"sort\":1}],\"methods\":[{\"className\":\"common/SleevedResource\",\"methodName\":\"Setup\",\"desc\":\"([B)V\",\"parameters\":\"94,-104,25,74,1,-58,-76,-113,-91,-126,-90,-87,-4,-69,-110,-42\",\"sort\":0},{\"className\":\"return\",\"methodName\":\"\",\"desc\":\"\",\"parameters\":\"\",\"sort\":0}]},{\"type\":2,\"fields\":[],\"methods\":[]}]}]");
+        Map<String, String> stringStringMap = JarUtil.searchPluginJar("C:\\Users\\fbi\\Documents\\javaProject\\DHook\\src\\main\\resources\\static\\plugins");
     }
 }
