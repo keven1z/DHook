@@ -146,8 +146,7 @@ public class JarUtil {
             String plugin = children[i];
             if (plugin.endsWith(".jar")) {
                 String plugin_path = dir_path + File.separator + plugin;
-                String plugin_name = plugin.substring(0, plugin.lastIndexOf(".jar"));
-                plugins.put(plugin_name, plugin_path);
+                plugins.put(plugin, plugin_path);
             }
         }
         return plugins;

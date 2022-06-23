@@ -50,9 +50,14 @@ var pluginTable = function () {
                     align: 'center',
                     valign: 'middle',
                 }, {
+                    field: 'fileName',
+                    title: '文件名'
+                },
+                {
                     field: 'pluginName',
                     title: '插件名'
-                }, {
+                },
+                {
                     field: 'desc',
                     title: '描述'
                 }]

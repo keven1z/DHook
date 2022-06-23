@@ -37,15 +37,14 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap-treeview.min.js}"></script>
     <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
     <script type="text/javascript" th:src="@{/js/hook.js}"></script>
     <script type="text/javascript" th:src="@{/js/plugin.js}"></script>
-
 </head>
 <body>
 <div class="page-header">
@@ -218,7 +217,7 @@
 
                     </div>
                     <div class="alert alert-danger hide" id="plugin_warn_div">
-                        <strong>加载错误!</strong> <span id="plugin_warn"></span>
+                        <strong>上传错误!</strong> <span id="plugin_warn"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="add_plugin_button" class="btn btn-default">添加插件</button>
@@ -290,6 +289,7 @@
         // 获取文件
         var fileData = $("#plugin_file").prop("files")[0];
         formData.append("plugin", fileData);
+        formData.append("agentId", $("small").text());
         $.ajax({
             url: '/plugin/add',
             type: 'POST',
@@ -308,6 +308,9 @@
 
                 $('#plugin_warn').text(jqXHR.responseText);
                 $('#plugin_warn_div').removeClass('hide');
+                setTimeout(function () {
+                    $('#plugin_warn_div').addClass('hide');
+                }, 5000);
             }
         });
     });

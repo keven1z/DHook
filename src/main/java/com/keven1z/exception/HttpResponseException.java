@@ -1,6 +1,6 @@
 package com.keven1z.exception;
 
-import com.keven1z.handler.ErrorEnum;
+import com.keven1z.http.ErrorEnum;
 
 /**
  * @author keven1z
