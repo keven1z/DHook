@@ -1,6 +1,5 @@
 package com.keven1z.utils;
 
-
 import dHook.DefaultDHookExtenderCallbacks;
 import dHook.IDHookExtender;
 import dHook.IDHookExtenderCallbacks;
@@ -151,19 +150,13 @@ public class JarUtil {
         }
         return plugins;
     }
-    public static IDHookExtenderCallbacks loadJar(String path) throws InstantiationException, IllegalAccessException, MalformedURLException, ClassNotFoundException {
-        Class<?> loadClass = new URLClassLoader(new URL[]{new URL(path)}).loadClass("dHook.DHookExtender");
+    public static IDHookExtenderCallbacks loadJar(String path) throws InstantiationException, IllegalAccessException, IOException, ClassNotFoundException {
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(path)});
+        Class<?> loadClass = urlClassLoader.loadClass("dHook.DHookExtender");
         IDHookExtender dHookExtender =(IDHookExtender)loadClass.newInstance();
         IDHookExtenderCallbacks extenderCallbacks = new DefaultDHookExtenderCallbacks();
         dHookExtender.registerExtenderCallbacks(extenderCallbacks);
+        urlClassLoader.close();
         return extenderCallbacks;
-    }
-    public static void main(String[] args) throws Exception {
-//        byte[] bytes = JarUtil.updateField("cn/com/x1001/Config", "registerID", "registerID");
-//        byte[] bytes = updateConfig("aaaa");
-//        System.out.println(bytes.length);
-//        int c= 999;
-//        updateHook("[{\"className\":\"common/Authorization\",\"method\":\"\\u003cinit\\u003e\",\"desc\":\"()V\",\"returnValue\":\"\",\"onMethodAction\":[{\"type\":1,\"fields\":[{\"name\":\"validto\",\"value\":\"forever\",\"sort\":0},{\"name\":\"valid\",\"value\":\"true\",\"sort\":1}],\"methods\":[{\"className\":\"common/SleevedResource\",\"methodName\":\"Setup\",\"desc\":\"([B)V\",\"parameters\":\"94,-104,25,74,1,-58,-76,-113,-91,-126,-90,-87,-4,-69,-110,-42\",\"sort\":0},{\"className\":\"return\",\"methodName\":\"\",\"desc\":\"\",\"parameters\":\"\",\"sort\":0}]},{\"type\":2,\"fields\":[],\"methods\":[]}]}]");
-        Map<String, String> stringStringMap = JarUtil.searchPluginJar("C:\\Users\\fbi\\Documents\\javaProject\\DHook\\src\\main\\resources\\static\\plugins");
     }
 }

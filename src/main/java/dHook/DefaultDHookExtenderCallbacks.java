@@ -6,7 +6,7 @@ import java.util.List;
  * @author keven1z
  * @date 2022/04/22
  */
-public class DefaultDHookExtenderCallbacks implements dHook.IDHookExtenderCallbacks {
+public class DefaultDHookExtenderCallbacks implements IDHookExtenderCallbacks {
     private String extensionName;
     private String desc;
     private List<String> hooks;
