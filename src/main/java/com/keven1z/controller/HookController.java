@@ -6,22 +6,16 @@ import com.keven1z.service.IMethodActionService;
 import com.keven1z.utils.GsonUtil;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
-import com.keven1z.utils.PluginUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author keven1z
@@ -50,7 +44,7 @@ public class HookController {
     /**
      * 通过agent id查找hook数据
      *
-     * @param id dHook.jar id
+     * @param id dHook.jar1 id
      * @return hook的json格式数据
      */
     @GetMapping("/find")
@@ -72,7 +66,7 @@ public class HookController {
     /**
      * 导出配置文件
      *
-     * @param id dHook.jar id
+     * @param id dHook.jar1 id
      * @return
      */
     @GetMapping("/export")
@@ -100,34 +94,5 @@ public class HookController {
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(jar_new));
         return HttpUtil.responseSource(fileName, resource, jar_new.length);
     }
-
-    @GetMapping("/get-plugins")
-    public String getPlugins(HttpServletResponse response) throws IOException {
-        Map<String, String> pluginJarMap = PluginUtil.pluginJarMap;
-        ArrayList<String> list = new ArrayList<>();
-        for (Map.Entry<String, String> plugin : pluginJarMap.entrySet()) {
-            String name = plugin.getKey();
-            list.add(name);
-        }
-        return GsonUtil.toJsonString(list);
-    }
-
-    @GetMapping("/getPluginByName")
-    public ResponseEntity<Object> getPlugins(String name) {
-        Map<String, String> pluginJarMap = PluginUtil.pluginJarMap;
-        String path = pluginJarMap.get(name);
-        if (path == null) return ResponseEntity.badRequest().body("0");
-
-        File file = new File(path);
-
-        try {
-            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
-            return HttpUtil.responseSource(name + ".jar", inputStreamResource, file.length());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("0");
-        }
-    }
-
-
 
 }

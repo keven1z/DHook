@@ -1,8 +1,8 @@
-# DHook ![2.2.1 (shields.io)](https://img.shields.io/badge/2.2.1-brightgreen.svg)
+# DHook ![2.3 (shields.io)](https://img.shields.io/badge/2.3-brightgreen.svg)
 DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技术对运行时的java应用进行字节码修改，并可以配置文件的方式来增加hook点，修改执行方法的返回值以及参数等。
 
-## 兼容性
-* java 8-11
+## 环境
+* jdk 8-11
 
 ## 快速开始
 
@@ -18,7 +18,7 @@ DHook是一个交互式自定义动态hook的工具。通过`javaagent`+`ASM`技
 |  |  \  :|  .--.  ||  | |  ||  | |  ||  .   '
 |  '--'  /|  |  |  |'  '-'  ''  '-'  '|  |\   \
 `-------' `--'  `--' `-----'  `-----' `--' '--'
- :: DHook ::2.0        springboot: (v2.6.2)
+ :: DHook ::2.3        springboot: (v2.6.2)
 
 2022-02-13 15:17:03.856  INFO 12496 --- [           main] com.keven1z.DHookServerApplication       : Starting DHookServerApplication v2.0 using Java 1.8.0_171 on zii with PID 12496 
 2022-02-13 15:17:03.856  INFO 12496 --- [           main] com.keven1z.DHookServerApplication       : No active profile set, falling back to default profiles: default
@@ -87,6 +87,10 @@ agent所捕获的Hook的所有类名
 #### 导出agent
 将会导出包含hook点的agent，该agent不与服务端绑定，去除了多余的api调用，仅作用hook点的修改，体积很小。
 
+### 插件
+> 插件编写见[plugin](./plugin.md)
+
+插件与agent id绑定，进入对应的agent的导入插件，插件放在plugins文件夹中。
 
 ### 案例
 
@@ -106,27 +110,39 @@ agent所捕获的Hook的所有类名
 
 
 ## 更新
-### 1.0版本
-* 支持hook接口，当填写的类为接口时，默认会hook所有实现的子类
-* 支持更改hook类的返回类型为string，int，boolean的返回值
-* 支持打印hook方法的所有参数值
+### 2.3版本 2022/6/26
 
-### 1.1版本
-* 增加通过`*`打印该类的所有方法
-* 支持打印返回值
-* 支持反编译代码
-* 支持修改参数
+* 增加插件功能
 
-### 2.0版本
+### 2.2版本
 
-* 增加交互式的hook操作
-* 增加方法执行前后的修改
+* 增加导出仅包含hook点信息的agent
 
 ### 2.1版本
 
 * 可以增加方法执行前后静态方法执行参数
 * 增加方法执行前后，直接return
 
-### 2.2版本
+### 2.0版本
 
-* 增加导出仅包含hook点信息的agent
+* 增加交互式的hook操作
+* 增加方法执行前后的修改
+
+### 1.1版本
+
+* 增加通过`*`打印该类的所有方法
+* 支持打印返回值
+* 支持反编译代码
+* 支持修改参数
+
+### 1.0版本
+* 支持hook接口，当填写的类为接口时，默认会hook所有实现的子类
+* 支持更改hook类的返回类型为string，int，boolean的返回值
+* 支持打印hook方法的所有参数值
+
+
+
+
+
+
+

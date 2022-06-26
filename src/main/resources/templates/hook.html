@@ -337,7 +337,7 @@
             dataType: 'html',
             contentType: 'application/json',
         }).done(function (data) {
-            refresh();
+            refresh_hook();
             setTimeout(function () {
                 $('#add_hook_dialog').modal('hide');
             }, 200);

@@ -44,7 +44,7 @@ var TableInit = function () {
             paginationPreText: "上一页",
             paginationNextText: "下一页",
             onClickRow: function (row, $element) {
-                console.log("click:" + row["id"])
+                // console.log("click:" + row["id"])
             },
             columns: [
                 {
@@ -80,7 +80,7 @@ var TableInit = function () {
     return oTableInit;
 };
 
-function refresh() {
+function refresh_hook() {
     $('#tb_departments').bootstrapTable('refresh', {
         query: {
             pageNumber: 1
@@ -100,7 +100,7 @@ function del_hook() {
         url: "/hook/del?hookId=" + id,
         type: "get",
         success: function (data) {
-            refresh();
+            refresh_hook();
         },
         error: function () {
         }

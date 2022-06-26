@@ -1,6 +1,5 @@
 package com.keven1z;
 
-import com.keven1z.utils.PluginUtil;
 import io.netty.channel.ChannelFuture;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import java.io.IOException;
 @MapperScan(basePackages = {"com.keven1z.dao"})
 public class DHookServerApplication  implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-    private static final PluginUtil pluginUtil = new PluginUtil();
     @Resource
     NettyServer nettyServer;
     public static void main(String[] args) {
@@ -28,8 +26,6 @@ public class DHookServerApplication  implements CommandLineRunner {
         // 开启服务
         int port = 7070;
         ChannelFuture future = nettyServer.start("localhost", port);
-        /* 加载插件*/
-//        pluginUtil.initPlugins();
         if (future.isSuccess()){
             logger.info("Netty started on port(s): "+port);
         }

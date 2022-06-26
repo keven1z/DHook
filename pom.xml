@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.keven1z</groupId>
     <artifactId>DHookServer</artifactId>
-    <version>2.2</version>
+    <version>2.3</version>
     <name>DHookServer</name>
     <description>DHookServer</description>
     <properties>
