@@ -10,6 +10,7 @@
 4. 在registerExtenderCallbacks中通过callbacks对象设置hook点等信息
 
 ## 案例
+以下为打印应用执行中的sql语句的插件：
 ```java
 public class DHookExtender extends IDHookExtender {
   public void registerExtenderCallbacks(IDHookExtenderCallbacks idHookExtenderCallbacks) {
@@ -57,6 +58,7 @@ public class DHookExtender extends IDHookExtender {
   }
 }
 ```
-> jdk9+ 编写插件时,tomcat应用需要修改catalina.sh以下选项
+> jdk9+ 编写插件时,tomcat应用需要修改catalina.sh以下选项:
+> 
 > JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED"
 > JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED"
