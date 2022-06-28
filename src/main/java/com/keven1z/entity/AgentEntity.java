@@ -4,9 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-
 /**
  * @author keven1z
  * @date 2021/12/27
