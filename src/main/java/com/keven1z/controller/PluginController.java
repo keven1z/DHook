@@ -7,7 +7,6 @@ import com.keven1z.http.ErrorEnum;
 import com.keven1z.service.IPluginService;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
-import dHook.IDHookExtenderCallbacks;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,55 +31,74 @@ import java.util.List;
 public class PluginController {
     @Resource
     private IPluginService pluginService;
+
     @PostMapping("/add")
-    public String addPlugin(@RequestParam("plugin") MultipartFile file,String agentId) throws Exception {
+    public String addPlugin(@RequestParam("plugin") MultipartFile file, String agentId) throws Exception {
         // 设置上传至项目文件夹下的uploadFile文件夹中，没有文件夹则创建
         File dir = new File("plugins");
         if (!dir.exists()) {
             dir.mkdirs();
         }
         String filename = file.getOriginalFilename();
-        if (filename == null || !filename.endsWith(".jar")){
+        if (filename == null || !filename.endsWith(".jar")) {
             throw new HttpResponseException(ErrorEnum.E_10000);
         }
         String path = dir.getAbsolutePath() + File.separator + file.getOriginalFilename();
-        try{
-            file.transferTo(new File(path));
-            IDHookExtenderCallbacks extenderCallbacks = JarUtil.loadJar("file:"+path);
+        try {
+            File f = new File(path);
+            if (f.exists()) f.delete();
+            file.transferTo(f);
+            Object defaultExtender = JarUtil.loadJar("file:" + path);
+            Method getExtensionNameMethod = defaultExtender.getClass().getMethod("getExtensionName");
+            Method getExtensionDescMethod = defaultExtender.getClass().getMethod("getExtensionDesc");
+            String extensionName = getExtensionNameMethod.invoke(defaultExtender).toString();
+            String extensionDesc = getExtensionDescMethod.invoke(defaultExtender).toString();
+
             PluginEntity pluginEntity = new PluginEntity();
-            pluginEntity.setPluginName(extenderCallbacks.getExtensionName());
-            pluginEntity.setDesc(extenderCallbacks.getExtensionDesc());
+            pluginEntity.setPluginName(extensionName);
+            pluginEntity.setDesc(extensionDesc);
             pluginEntity.setFileName(file.getOriginalFilename());
             pluginEntity.setAgentId(agentId);
             pluginEntity.setFilePath(path);
             pluginService.insert(pluginEntity);
-        }
-        catch (IOException e){
-            throw  new HttpResponseException(ErrorEnum.E_20001);
-        }
-        catch (Exception e){
-            throw  new HttpResponseException(ErrorEnum.E_10001);
+        } catch (IOException e) {
+            throw new HttpResponseException(ErrorEnum.E_20001);
+        } catch (Exception e) {
+            throw new HttpResponseException(ErrorEnum.E_10001);
         }
 
         return "1";
     }
+
     @GetMapping("/all")
-    public List<PluginEntity> all(){
+    public List<PluginEntity> all() {
         List<PluginEntity> pluginEntities = pluginService.queryAll();
         return pluginEntities;
     }
+
+    @GetMapping("/find")
+    public List<PluginEntity> find(String agentId) {
+        return pluginService.selectById(agentId);
+    }
+
+    /**
+     * @param agentId
+     * @return 插件名的集合
+     */
     @GetMapping("/select")
-    public ArrayList<String> select(String agentId){
+    public ArrayList<String> select(String agentId) {
         List<PluginEntity> pluginEntities = pluginService.selectById(agentId);
         ArrayList<String> arrayList = new ArrayList<>();
-        for (PluginEntity entity:pluginEntities){
+        for (PluginEntity entity : pluginEntities) {
             arrayList.add(entity.getFileName());
         }
         return arrayList;
     }
+
     @GetMapping("/download")
     public ResponseEntity<Object> getPlugins(String fileName) {
         PluginEntity pluginEntity = pluginService.select(fileName);
+        if (pluginEntity == null) throw new HttpResponseException(ErrorEnum.E_30001);
         String path = pluginEntity.getFilePath();
         File file = new File(path);
         try {
@@ -89,16 +108,18 @@ public class PluginController {
             return ResponseEntity.badRequest().body("0");
         }
     }
-    @GetMapping("/uninstall")
-    public boolean uninstall(String pluginName){
-        int delete = pluginService.delete(pluginName);
-        if (delete == 1){
-            PluginEntity pluginEntity = pluginService.select(pluginName);
-            String filePath = pluginEntity.getFilePath();
-            File file = new File(filePath);
-            if (file.exists()) return file.delete();
-        }
-        return false;
+
+    @GetMapping("/unload")
+    public boolean uninstall(String fileName, String agentId) {
+        int delete = pluginService.delete(fileName, agentId);
+//        if (delete == 1){
+//            PluginEntity pluginEntity = pluginService.select(pluginName);
+//            String filePath = pluginEntity.getFilePath();
+//            File file = new File(filePath);
+//            if (file.exists()) return file.delete();
+//        }
+
+        return delete == 1;
     }
 
 }

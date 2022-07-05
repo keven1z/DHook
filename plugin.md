@@ -62,3 +62,5 @@ public class DHookExtender extends IDHookExtender {
 > 
 > JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED"
 > JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED"
+
+**多个插件中自定义类名不要相同，目前会出现错误**

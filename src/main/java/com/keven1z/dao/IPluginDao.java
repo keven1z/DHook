@@ -24,8 +24,8 @@ public interface IPluginDao {
 
 //    @Update({ "update agent set time = #{time},state = #{state},javaVersion=#{javaVersion},os=#{os},bind_process_name=#{bindProcessName} where id = #{id}" })
 //    int update(PluginEntity pluginEntity);
-    @Delete("DELETE FROM plugins WHERE file_name = #{fileName}")
-    int delete(String fileName);
+    @Delete("DELETE FROM plugins WHERE file_name = #{fileName} and agent_id = #{agentId}")
+    int delete(String fileName,String agentId);
 
     @Select("select * FROM plugins WHERE file_name = #{fileName}")
     @Result(id = true,column = "file_name",property = "fileName")

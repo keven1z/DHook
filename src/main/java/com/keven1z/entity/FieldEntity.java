@@ -19,15 +19,15 @@ import java.io.Serializable;
 public class FieldEntity{
 
     private int fieldId;
-    private int type;
     @Expose
     private String name;
     @Expose
     private Object value;
-    private int maId;
+    private int hookId;
     @Expose
     private int sort;
-
+    @Expose
+    private int type;
     public int getFieldId() {
         return fieldId;
     }
@@ -36,12 +36,12 @@ public class FieldEntity{
         this.fieldId = fieldId;
     }
 
-    public int getMaId() {
-        return maId;
+    public int getHookId() {
+        return hookId;
     }
 
-    public void setMaId(int maId) {
-        this.maId = maId;
+    public void setHookId(int hookId) {
+        this.hookId = hookId;
     }
 
     public String getName() {
@@ -50,14 +50,6 @@ public class FieldEntity{
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
     }
 
     public Object getValue() {
@@ -74,5 +66,13 @@ public class FieldEntity{
 
     public void setSort(int sort) {
         this.sort = sort;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

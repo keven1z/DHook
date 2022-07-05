@@ -1,8 +1,5 @@
 package com.keven1z.utils;
 
-import dHook.DefaultDHookExtenderCallbacks;
-import dHook.IDHookExtender;
-import dHook.IDHookExtenderCallbacks;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.springframework.core.io.Resource;
@@ -10,6 +7,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -149,13 +148,22 @@ public class JarUtil {
         }
         return plugins;
     }
-    public static IDHookExtenderCallbacks loadJar(String path) throws InstantiationException, IllegalAccessException, IOException, ClassNotFoundException {
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(path)});
-        Class<?> loadClass = urlClassLoader.loadClass("dHook.DHookExtender");
-        IDHookExtender dHookExtender =(IDHookExtender)loadClass.newInstance();
-        IDHookExtenderCallbacks extenderCallbacks = new DefaultDHookExtenderCallbacks();
-        dHookExtender.registerExtenderCallbacks(extenderCallbacks);
-        urlClassLoader.close();
-        return extenderCallbacks;
+
+    public static Object loadJar(String path) throws InstantiationException, IllegalAccessException, IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
+        URLClassLoader urlClassLoader = null;
+        Object defaultDHookExtenderCallbacks;
+        try {
+            urlClassLoader = new URLClassLoader(new URL[]{new URL(path)});
+            Class<?> defaultDHookExtenderCallbacksClass = urlClassLoader.loadClass("dHook.DefaultDHookExtenderCallbacks");
+            defaultDHookExtenderCallbacks = defaultDHookExtenderCallbacksClass.getDeclaredConstructor(new Class[]{}).newInstance();
+            Class<?> loadClass = urlClassLoader.loadClass("dHook.DHookExtender");
+
+            Method registerExtenderCallbacks = loadClass.getDeclaredMethod("registerExtenderCallbacks", urlClassLoader.loadClass("dHook.IDHookExtenderCallbacks"));
+            Object dHookExtender = loadClass.getDeclaredConstructor(new Class[]{}).newInstance();
+            registerExtenderCallbacks.invoke(dHookExtender, defaultDHookExtenderCallbacks);
+        } finally {
+            if (urlClassLoader != null) urlClassLoader.close();
+        }
+        return defaultDHookExtenderCallbacks;
     }
 }

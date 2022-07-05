@@ -2,7 +2,6 @@ package com.keven1z.service.impl;
 
 import com.keven1z.dao.IFieldDao;
 import com.keven1z.dao.IHookDao;
-import com.keven1z.dao.IMethodActionDao;
 import com.keven1z.dao.IMethodDao;
 import com.keven1z.entity.*;
 import com.keven1z.service.IHookService;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+
 
 /**
  * @author keven1z
@@ -23,12 +23,10 @@ public class HookServiceImpl implements IHookService {
     private IMethodDao methodDao;
     @Resource
     private IFieldDao fieldDao;
-    @Resource
-    private IMethodActionDao methodActionDao;
 
     @Override
     public HookEntity findHookById(String id) {
-        return hookDao.findHookById(id);
+        return hookDao.findHookByHookId(id);
     }
 
     @Override
@@ -38,48 +36,82 @@ public class HookServiceImpl implements IHookService {
 
     @Override
     public int addHook(HookEntity hookEntity) {
-        List<MethodActionEntity> onMethodActionEntity = hookEntity.getOnMethodAction();
-        int insert_count = hookDao.addHook(hookEntity);
-        if (onMethodActionEntity == null) return insert_count;
+        List<MethodEntity> methodEntities = hookEntity.getMethodEntities();
+        List<FieldEntity> fieldEntities = hookEntity.getFieldEntities();
+        int insertCount = hookDao.addHook(hookEntity);
+        if (methodEntities == null && fieldEntities == null) return insertCount;
 
-        int hook_id = hookEntity.getId();
-        for (MethodActionEntity methodActionEntity : onMethodActionEntity) {
-            methodActionEntity.setHookId(hook_id);
-            methodActionDao.insert(methodActionEntity);
-            int maId = methodActionEntity.getMaId();
-
-            List<MethodEntity> methods = methodActionEntity.getMethods();
-            if (methods != null) {
-                for (MethodEntity method : methods) {
-                    method.setMaId(maId);
-                    methodDao.insert(method);
-                }
+        int hookId = hookEntity.getId();
+        if (methodEntities != null) {
+            for (MethodEntity methodEntity : methodEntities) {
+                methodEntity.setHookId(hookId);
+                methodDao.insert(methodEntity);
             }
-
-            List<FieldEntity> fields = methodActionEntity.getFields();
-            if (fields == null) continue;
-            for (FieldEntity fieldEntity : fields) {
-                fieldEntity.setMaId(maId);
+        }
+        if (fieldEntities != null) {
+            for (FieldEntity fieldEntity : fieldEntities) {
+                fieldEntity.setHookId(hookId);
                 fieldDao.insert(fieldEntity);
             }
         }
-        return insert_count;
+        return insertCount;
     }
 
+    @Override
+    public int updateHook(HookEntity hookEntity) {
+        int updateCount = hookDao.update(hookEntity);
+        List<MethodEntity> methodEntities = hookEntity.getMethodEntities();
+        List<FieldEntity> fieldEntities = hookEntity.getFieldEntities();
+        //更新时发现删除部分方法和字段
+        int hookId = hookEntity.getId();
+        List<FieldEntity> originFieldEntityList = fieldDao.findFieldAll(hookId);
+        if (originFieldEntityList.size() != fieldEntities.size()){
+            for (FieldEntity fieldEntity:originFieldEntityList){
+                int fieldId = fieldEntity.getFieldId();
+                if(!isInField(fieldId,fieldEntities)) fieldDao.deleteByFieldId(fieldId);
+            }
+        }
+
+        List<MethodEntity> originMethodEntities = methodDao.findMethodAll(hookId);
+        if (originMethodEntities.size() != methodEntities.size()){
+            for (MethodEntity methodEntity:originMethodEntities){
+                int methodId = methodEntity.getMethodId();
+                if(!isInMethod(methodId,methodEntities)) methodDao.deleteByMethodId(methodId);
+            }
+        }
+
+        for (MethodEntity methodEntity : methodEntities) {
+            int methodId = methodEntity.getMethodId();
+            //更新时新增的方法
+            if (methodId == -1){
+                methodEntity.setHookId(hookEntity.getId());
+                methodDao.insert(methodEntity);
+            }
+            else methodDao.update(methodEntity);
+        }
+        for (FieldEntity fieldEntity : fieldEntities) {
+            int fieldId = fieldEntity.getFieldId();
+            if (fieldId == -1){
+                fieldDao.insert(fieldEntity);
+            }
+            else fieldDao.update(fieldEntity);
+        }
+        return updateCount;
+    }
     @Override
     public List<HookEntity> findHooksByAgentId(String agentId) {
         return hookDao.findHooksByAgentId(agentId);
     }
 
     @Override
+    public HookEntity findHooksByHookId(String hookId) {
+        return hookDao.findHookByHookId(hookId);
+    }
+
+    @Override
     public int deleteHook(int hookId) {
-        List<MethodActionEntity> methodActionAll = methodActionDao.findMethodActionAll(hookId);
-        for (MethodActionEntity methodAction : methodActionAll) {
-            int maId = methodAction.getMaId();
-            fieldDao.delete(maId);
-            methodDao.delete(maId);
-        }
-        methodActionDao.delete(hookId);
+        fieldDao.delete(hookId);
+        methodDao.delete(hookId);
         return hookDao.delete(hookId);
     }
 
@@ -94,4 +126,18 @@ public class HookServiceImpl implements IHookService {
         return delCount;
     }
 
+    public boolean isInField(int fieldId,List<FieldEntity> fieldEntityList){
+        for (FieldEntity fieldEntity:fieldEntityList){
+            int id = fieldEntity.getFieldId();
+            if (fieldId == id ) return true;
+        }
+        return false;
+    }
+    public boolean isInMethod(int methodId,List<MethodEntity> methodEntityList){
+        for (MethodEntity methodEntity:methodEntityList){
+            int id = methodEntity.getMethodId();
+            if (methodId == id ) return true;
+        }
+        return false;
+    }
 }

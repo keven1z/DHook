@@ -30,8 +30,8 @@ public class PluginServiceImpl implements IPluginService {
     }
 
     @Override
-    public int delete(String fileName) {
-        return pluginDao.delete(fileName);
+    public int delete(String fileName, String agentId) {
+        return pluginDao.delete(fileName, agentId);
     }
 
     @Override

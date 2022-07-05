@@ -42,6 +42,19 @@ public class AgentController {
         List<AgentEntity> agentEntities = agentService.findAgentAll();
         return agentEntities;
     }
+
+    @GetMapping("/update")
+    public int update(@RequestParam(value = "id") String id,String name){
+        AgentEntity entity = agentService.findAgentById(id);
+        if (entity != null){
+            entity.setName(name);
+            agentService.update(entity);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
     /*
      * 删除agent
      */
@@ -57,8 +70,8 @@ public class AgentController {
         logger.info("注册agent:"+agentEntity);
         AgentEntity entity = agentService.findAgentById(agentEntity.getId());
         if (entity != null){
-            agentService.update(agentEntity);
-            return 1;
+            agentEntity.setName(entity.getName());
+            return agentService.update(agentEntity);
         }
         else {
             return 0;
@@ -83,7 +96,7 @@ public class AgentController {
      * @return
      */
     @GetMapping("/export")
-    public ResponseEntity<Object> export(@RequestParam(value = "id") String id, HttpServletResponse response)  {
+    public ResponseEntity<Object> export(@RequestParam(value = "id") String id)  {
         String fileName = "dHook.jar";
         byte[] jar_new;
         try {

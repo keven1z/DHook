@@ -2,7 +2,6 @@ package com.keven1z.controller;
 
 import com.keven1z.entity.HookEntity;
 import com.keven1z.service.IHookService;
-import com.keven1z.service.IMethodActionService;
 import com.keven1z.utils.GsonUtil;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
@@ -27,15 +26,16 @@ public class HookController {
     private static final Logger logger = LoggerFactory.getLogger(HookController.class);
 
     @Resource
-    private IMethodActionService methodActionService;
-    @Resource
     private IHookService hookService;
 
     @PostMapping("/add")
     public int addHook(@RequestBody HookEntity hookEntity) {
         return hookService.addHook(hookEntity);
     }
-
+    @PostMapping("/update")
+    public int updateHook(@RequestBody HookEntity hookEntity) {
+        return hookService.updateHook(hookEntity);
+    }
     @GetMapping("/all")
     public List<HookEntity> allHook() {
         return hookService.findHookAll();
@@ -44,14 +44,17 @@ public class HookController {
     /**
      * 通过agent id查找hook数据
      *
-     * @param id dHook.jar1 id
+     * @param id dHook.jar id
      * @return hook的json格式数据
      */
     @GetMapping("/find")
     public List<HookEntity> hook(String id) {
         return hookService.findHooksByAgentId(id);
     }
-
+    @GetMapping("/get")
+    public HookEntity find(String hookId) {
+        return hookService.findHooksByHookId(hookId);
+    }
     @GetMapping("/delAll")
     public int delAll(String agent_id) {
         return hookService.deleteAll(agent_id);
@@ -66,7 +69,7 @@ public class HookController {
     /**
      * 导出配置文件
      *
-     * @param id dHook.jar1 id
+     * @param id dHook.jar id
      * @return
      */
     @GetMapping("/export")

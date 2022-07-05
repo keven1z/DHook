@@ -3,27 +3,39 @@
 <head>
     <!-- 必须的 meta 标签 -->
     <meta charset="utf-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap 的 CSS 文件 -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
-    <style>
-        .th-inner {
-            width: 160px;
-        !important;
-        }
-    </style>
+
+    <script  th:src="@{/js/include.js}"></script>
+
     <title>DHook</title>
 </head>
 <body>
-<div class="page-header">
-    <h1>DHook
-    </h1>
+<include src="header.html" /></include>
+<!-- Bootstrap 的 CSS 文件 -->
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.css">
+<!--<div class="page-header">-->
+<!--    <h1>DHook-->
+<!--    </h1>-->
+<!--</div>-->
+
+<div id="toolbar" class="btn-group">
+    <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal"
+            data-target="#add_app">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+    </button>
+    <button id="btn_edit" type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+    </button>
+    <button id="btn_delete" type="button" class="btn btn-default" onclick="del_application()">
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+    </button>
 </div>
+<table id="tb_departments"></table>
 <div id="myTabContent" class="tab-content">
     <div class="modal fade" id="add_app" role="dialog">
         <div class="modal-dialog">
@@ -48,30 +60,37 @@
         </div>
     </div>
 </div>
-<div id="toolbar" class="btn-group">
-    <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal"
-            data-target="#add_app">
-        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-    </button>
-    <button id="btn_edit" type="button" class="btn btn-default">
-        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-    </button>
-    <button id="btn_delete" type="button" class="btn btn-default" onclick="del_hook()">
-        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-    </button>
+<div id="model_update" class="modal fade"  role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">添加应用</h4>
+            </div>
+            <div class="modal-body">
+                <form id="app_update_form" action="/agent/update" method="GET">
+                    <div class="input-group">
+                        <span class="input-group-addon">应用名</span>
+                        <input type="text" id="app_name" class="form-control" placeholder="ClassName"
+                               aria-describedby="basic-addon1" value="">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="update_button" onsubmit="void(0)"  onclick="update_application()" type="button" class="btn btn-default">更新</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
 </div>
-<table id="tb_departments"></table>
-
 <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript" th:src="@{/js/bootstrap-treeview.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.js"></script>
 
 <script>
     $('#addApp').click(function () {
         let url = '/agent/add';
-
         $.ajax({
             //async:false,非异步，modal窗口失效；
             async: true,
@@ -87,13 +106,12 @@
         })
 
     });
-    $(function () {
 
+    $(function () {
         //1.初始化Table
         var oTable = new TableInit();
         oTable.Init();
-
-
+        $(".caret").remove();
     });
 
 
@@ -126,8 +144,8 @@
                 showRefresh: true,                  //是否显示刷新按钮
                 minimumCountColumns: 2,             //最少允许的列数
                 clickToSelect: true,                //是否启用点击选中行
-                singleSelect: false,                 //是否单选模式
-                height: $(window).height() - 100,   //table总高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                singleSelect: true,                 //是否单选模式
+                height: $(window).height() - 150,   //table总高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
                 uniqueId: "id",                     //每一行的唯一标识，一般为主键列
                 showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
                 cardView: false,                    //是否显示详细视图
@@ -142,19 +160,17 @@
                         checkbox: true,
                         align: 'center',
                         valign: 'middle',
-                        width: '10px',
+                        width: '10',
                     },
                     {
                         field: 'id',
                         title: 'id',
-                        width: '80px',
                     }, {
                         field: 'name',
                         title: '应用名'
                     }, {
                         field: 'state',
                         title: '状态',
-                        width: '30px',
                     }, {
                         field: 'time',
                         title: '最近连接时间',
@@ -171,9 +187,8 @@
                         field: 'phone',
                         // align: 'center',
                         // valign: 'middle',
-                        width: '200px',
                         formatter: function (value, row, index) {
-                            return "<button class=\"btn btn-primary\" onclick=\"export_agent('" + row.id + "')\" >下载agent</button><a class=\"btn btn-primary\" href='/hook.html?id=" + row.id + "' >编辑Hook</a>";
+                            return "<button class=\"btn btn-primary\" onclick=\"export_agent('" + row.id + "')\" >下载agent</button><a class=\"btn btn-primary\" href='/hook.html?id=" + row.id + "' >详情</a>";
                         }
                     }
                 ]
@@ -190,11 +205,20 @@
             }
         });
     }
-
-    function del_hook() {
+    function getAppNameSelections() {
+        return $.map($("#tb_departments").bootstrapTable('getSelections'), function (row) {
+            return row.name
+        })[0]
+    }
+    function getAppidSelections() {
+        return $.map($("#tb_departments").bootstrapTable('getSelections'), function (row) {
+            return row.id
+        })[0]
+    }
+    function del_application() {
         let selected = $(".selected");
         if (selected.length === 0) {
-            alert("未选择删除的hook点");
+            alert("未选择删除的应用");
             return;
         }
 
@@ -209,21 +233,42 @@
             }
         });
     }
+    function update_application() {
+        let appidSelections = getAppidSelections();
+        let appNameSelections = getAppNameSelections();
+        $.ajax({
+            url: "/agent/update?id=" + appidSelections+"&name="+$("#app_name").val(),
+            type: "get",
+            success: function (data) {
+                refresh();
+                setTimeout(function () {
+                    $('#model_update').modal('hide');
+                }, 200);
+
+            },
+            error: function () {
+            }
+        });
+    }
+
+
+    $(document).ready(function() {
+        $("#btn_edit").click(function() {
+            var id = getAppNameSelections();
+            if (id == null){
+                alert("未选择应用");
+                return
+            }
+            $("#app_name").attr("value", id);
+            $("#model_update").modal();
+        });
+    });
 
     function export_agent(id) {
         let url = "/agent/export?id=" + id;
         window.open(url, '_blank');
-        // $.ajax({
-        //     //async:false,非异步，modal窗口失效；
-        //     async: true,
-        //     url: url,
-        //     type: 'GET',
-        // }).done(function (data) {
-        //
-        // }).fail(function (data) {
-        //     alert("下载失败");
-        // })
     }
+
 </script>
 </body>
 </html>

@@ -17,4 +17,5 @@ public interface IAgentService {
     void register(String id, String name);
     int update(AgentEntity agentEntity);
     int delete(String agentId);
+    void updateState(String id, int state, String time);
 }

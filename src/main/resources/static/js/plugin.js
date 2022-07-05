@@ -9,7 +9,7 @@ var pluginTable = function () {
     //初始化Table
     ti.Init = function () {
         $('#plugin_departments').bootstrapTable({
-            url: '/plugin/all',         //请求后台的URL（*）
+            url: '/plugin/find?agentId=' + $("small").text(),         //请求后台的URL（*）
             method: 'get',                      //请求方式（*）
             dataType: 'json',
             toolbar: '#plugin_toolbar',                //工具按钮用哪个容器
@@ -78,6 +78,30 @@ function refresh() {
     $('#plugin_departments').bootstrapTable('refresh', {
         query: {
             pageNumber: 1
+        }
+    });
+}
+
+function getFileNameSelections() {
+    return $.map($("#plugin_departments").bootstrapTable('getSelections'), function (row) {
+        return row.fileName
+    })
+}
+
+function unload_plugin() {
+    $.ajax({
+        url: '/plugin/unload?agentId=' + $("small").text() + '&fileName=' + getFileNameSelections()[0],
+        type: 'GET',
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+            setTimeout(function () {
+                refresh();
+            }, 200);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
         }
     });
 }

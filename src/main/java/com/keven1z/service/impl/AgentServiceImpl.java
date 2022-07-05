@@ -16,6 +16,7 @@ import java.util.List;
 public class AgentServiceImpl implements IAgentService {
     @Resource
     private IAgentDao agentDao;
+
     @Override
     public AgentEntity findAgentById(String id) {
         return agentDao.findAgentById(id);
@@ -48,6 +49,11 @@ public class AgentServiceImpl implements IAgentService {
     @Override
     public int delete(String agentId) {
         return agentDao.delete(agentId);
+    }
+
+    @Override
+    public void updateState(String id, int state, String time) {
+        agentDao.updateState(id, state, time);
     }
 
 

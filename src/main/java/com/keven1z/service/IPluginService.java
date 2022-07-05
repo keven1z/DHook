@@ -13,7 +13,7 @@ import java.util.List;
 public interface IPluginService {
     void insert(PluginEntity pluginEntity);
     List<PluginEntity> queryAll();
-    int delete(String fileName);
+    int delete(String fileName,String agentId);
     PluginEntity select(String fileName);
     List<PluginEntity> selectById(String agentId);
 }

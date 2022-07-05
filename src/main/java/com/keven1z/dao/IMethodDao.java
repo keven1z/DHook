@@ -12,18 +12,23 @@ import java.util.List;
 @Mapper
 public interface IMethodDao {
 
-    @Select("select * from method where ma_id=#{id}")
+    @Select("select * from method where hook_id=#{id}")
     @Result(id = true,column = "method_id",property = "methodId")
     @Result(column = "class_name",property = "className")
     @Result(column = "method_name",property = "methodName")
-    @Result(column = "ma_id",property = "maId")
+    @Result(column = "hook_id",property = "hookId")
     List<MethodEntity> findMethodAll(int id);
 
-    @Insert({"INSERT INTO method(class_name, method_name, desc,ma_id,sort,parameters) ",
-            "VALUES (#{className},#{methodName},#{desc},#{maId},#{sort},#{parameters})"})
+    @Insert({"INSERT INTO method(class_name, method_name, desc,hook_id,sort,type,parameters) ",
+            "VALUES (#{className},#{methodName},#{desc},#{hookId},#{sort},#{type},#{parameters})"})
     @Options(useGeneratedKeys=true, keyProperty="methodId")
     int insert(MethodEntity methodEntity);
 
-    @Delete("DELETE FROM method WHERE ma_id = #{maId}")
-    int delete(int maId);
+    @Delete("DELETE FROM method WHERE hook_id = #{hookId}")
+    int delete(int hookId);
+    @Delete("DELETE FROM method WHERE method_id = #{methodId}")
+    int deleteByMethodId(int methodId);
+
+    @Update("update method set  class_name = #{className},method_name=#{methodName},desc=#{desc},parameters=#{parameters},sort=#{sort} WHERE method_id = #{methodId}")
+    int update(MethodEntity methodEntity);
 }

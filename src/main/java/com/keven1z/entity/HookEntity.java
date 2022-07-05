@@ -26,12 +26,14 @@ public class HookEntity implements Serializable {
     @Expose
     private String desc;
     @Expose
-    private String parameter;
+    private String parameters;
     @Expose
     private Object returnValue;
     private String agentId;
     @Expose
-    private List<MethodActionEntity> onMethodAction;
+    private List<FieldEntity> fieldEntities;
+    @Expose
+    private List<MethodEntity> methodEntities;
 
     public int getId() {
         return id;
@@ -65,12 +67,12 @@ public class HookEntity implements Serializable {
         this.desc = desc;
     }
 
-    public String getParameter() {
-        return parameter;
+    public String getParameters() {
+        return parameters;
     }
 
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     public Object getReturnValue() {
@@ -89,11 +91,19 @@ public class HookEntity implements Serializable {
         this.agentId = agentId;
     }
 
-    public List<MethodActionEntity> getOnMethodAction() {
-        return onMethodAction;
+    public List<FieldEntity> getFieldEntities() {
+        return fieldEntities;
     }
 
-    public void setOnMethodAction(List<MethodActionEntity> onMethodAction) {
-        this.onMethodAction = onMethodAction;
+    public void setFieldEntities(List<FieldEntity> fieldEntities) {
+        this.fieldEntities = fieldEntities;
+    }
+
+    public List<MethodEntity> getMethodEntities() {
+        return methodEntities;
+    }
+
+    public void setMethodEntities(List<MethodEntity> methodEntities) {
+        this.methodEntities = methodEntities;
     }
 }

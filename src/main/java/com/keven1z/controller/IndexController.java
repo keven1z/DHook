@@ -1,6 +1,8 @@
 package com.keven1z.controller;
 
 import com.keven1z.entity.AgentEntity;
+import com.keven1z.exception.HttpResponseException;
+import com.keven1z.http.ErrorEnum;
 import com.keven1z.service.IAgentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.SerializationUtils;
@@ -31,6 +33,7 @@ public class IndexController {
     public String hook(HttpServletRequest request,@RequestParam(value = "id", required = true)String id){
         AgentEntity agentById = agentService.findAgentById(id);
         request.setAttribute("id",id);
+        if(agentById == null) throw new HttpResponseException(ErrorEnum.E_30001);
         request.setAttribute("applicationName",agentById.getName());
         return "hook";
     }

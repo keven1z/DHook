@@ -17,11 +17,13 @@ public class AgentUtil {
     private IAgentService agentService;
 
     public static AgentUtil agentUtil;
+
     @PostConstruct
     public void init() {
         agentUtil = this;
     }
-    public static void update(AgentEntity agentEntity){
-        agentUtil.agentService.update(agentEntity);
+
+    public static void update(String id, int state, String time) {
+        agentUtil.agentService.updateState(id, state, time);
     }
 }

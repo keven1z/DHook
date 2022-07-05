@@ -11,6 +11,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
@@ -23,9 +24,9 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
     private final static Logger LOGGER = LoggerFactory.getLogger(HeartBeatSimpleHandle.class);
 
 
-
     /**
      * 取消绑定
+     *
      * @param ctx
      * @throws Exception
      */
@@ -34,23 +35,19 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
         Channel channel = ctx.channel();
         String id = NettySocketHolder.get((NioSocketChannel) channel);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis()-5000);
-        String time  = sdf.format(timestamp);
-        AgentEntity entity = new AgentEntity();
-        entity.setId(id);
-        entity.setState(0);
-        entity.setTime(time);
-        AgentUtil.update(entity);
-        LOGGER.info(id+" 断开连接");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis() - 5000);
+        String time = sdf.format(timestamp);
+        AgentUtil.update(id, 0, time);
+        LOGGER.info(id + " 断开连接");
         NettySocketHolder.remove((NioSocketChannel) ctx.channel());
     }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent){
-            IdleStateEvent idleStateEvent = (IdleStateEvent) evt ;
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
 
-            if (idleStateEvent.state() == IdleState.READER_IDLE){
+            if (idleStateEvent.state() == IdleState.READER_IDLE) {
                 //向客户端发送消息
             }
         }
@@ -63,7 +60,7 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
 //        LOGGER.info("收到customProtocol={}", customProtocol);
         //保存客户端与 Channel 之间的关系
         if (NettySocketHolder.getMAP().containsKey(customProtocol.getId())) return;
-        NettySocketHolder.put(customProtocol.getId(),(NioSocketChannel)ctx.channel()) ;
+        NettySocketHolder.put(customProtocol.getId(), (NioSocketChannel) ctx.channel());
     }
 
     @Override

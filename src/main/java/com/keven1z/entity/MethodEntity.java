@@ -36,9 +36,11 @@ public class MethodEntity implements Serializable {
     private String desc;
     @Expose
     private String parameters;
-    private int maId;
+    private int hookId = -1;
     @Expose
     private int sort;
+    @Expose
+    private int type;
 
     public int getMethodId() {
         return methodId;
@@ -72,12 +74,12 @@ public class MethodEntity implements Serializable {
         this.desc = desc;
     }
 
-    public int getMaId() {
-        return maId;
+    public int getHookId() {
+        return hookId;
     }
 
-    public void setMaId(int maId) {
-        this.maId = maId;
+    public void setHookId(int hookId) {
+        this.hookId = hookId;
     }
 
     public int getSort() {
@@ -94,5 +96,13 @@ public class MethodEntity implements Serializable {
 
     public void setParameters(String parameters) {
         this.parameters = parameters;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

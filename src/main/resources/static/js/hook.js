@@ -36,7 +36,7 @@ var TableInit = function () {
             minimumCountColumns: 2,             //最少允许的列数
             clickToSelect: true,                //是否启用点击选中行
             singleSelect: true,                 //是否单选模式
-            height: $(window).height() - 200,   //table总高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            height: $(window).height() - 220,   //table总高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
             showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
             cardView: false,                    //是否显示详细视图
@@ -88,14 +88,20 @@ function refresh_hook() {
     });
 }
 
+function getIdSelections() {
+    return $.map($("#tb_departments").bootstrapTable('getSelections'), function (row) {
+        return row.id
+    })
+}
+
 function del_hook() {
-    let selected = $(".selected");
+    let selected = getIdSelections();
     if (selected.length === 0) {
         alert("未选择删除的hook点");
         return;
     }
 
-    let id = selected.children("td")[1].innerHTML;
+    let id = selected[0];
     $.ajax({
         url: "/hook/del?hookId=" + id,
         type: "get",
@@ -105,5 +111,35 @@ function del_hook() {
         error: function () {
         }
     });
+}
+
+function update_hook(hook_id) {
+    let url = '/hook/update';
+    let methodFields = getMethodFields(hook_id);
+    $.ajax({
+        //async:false,非异步，modal窗口失效；
+        async: true,
+        url: url,
+        type: 'POST',
+        data: JSON.stringify({
+            agentId: $("small").text(),
+            id: hook_id,
+            className: $('#className').val(),
+            desc: $('#desc').val(),
+            method: $('#method').val(),
+            returnValue: $('#returnValue').val(),
+            "methodEntities": methodFields.methods,
+            "fieldEntities": methodFields.fields
+
+        }),
+        dataType: 'html',
+        contentType: 'application/json',
+    }).done(function (data) {
+        refresh_hook();
+        setTimeout(function () {
+            $('#add_hook_dialog').modal('hide');
+        }, 200);
+    })
+
 }
 
