@@ -107,7 +107,9 @@ agent所捕获的Hook的所有类名
 
 ![image-20220223105550651](https://typora-1253484559.cos.ap-shanghai.myqcloud.com/img/image-20220223105550651.png)
 
-
+### 后续计划
+- [ ] 插件化污点跟踪IAST
+- [ ] 自定义配置文件
 
 ## 更新
 ### 2.3.1 版本 2022/7/5
