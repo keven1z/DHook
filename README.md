@@ -108,6 +108,8 @@ agent所捕获的Hook的所有类名
 ![image-20220223105550651](https://typora-1253484559.cos.ap-shanghai.myqcloud.com/img/image-20220223105550651.png)
 
 ### 后续计划
+- [ ] 敏感数据跟踪插件
+- [ ] 插件离线化
 - [ ] 插件化污点跟踪IAST
 - [ ] 自定义配置文件
 
