@@ -37,7 +37,7 @@
 
 
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap-treeview.min.js}"></script>
     <script src="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.js"></script>
     <script type="text/javascript" th:src="@{/js/hook.js}"></script>
@@ -63,15 +63,19 @@
     <li><a href="#plugins-tab" data-toggle="tab">插件</a></li>
 
     <li class="dropdown ">
-        <a href="#" id="myTabDrop1" data-toggle="dropdown">功能 <b class="caret"></b>
+        <a href="#" id="myTabDrop1" data-toggle="dropdown">功能 <i class="glyphicon glyphicon-th icon-th"></i></b>
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-            <li><a th:href="@{/hook/export(id=${id})}" th:target="_blank" tabindex="-1">
+            <li><a th:href="@{/hook/export(id=${id})}" title="导出hook信息的json文件" th:target="_blank" tabindex="-1">
                 导出Hook</a>
             </li>
-            <li><a th:href="@{/hook/export-offline(id=${id})}" th:target="_blank" tabindex="-1">
-                导出Agent</a>
+            <li><a th:href="@{/agent/export(id=${id})}"  th:target="_blank" tabindex="-1">
+                导出在线agent</a>
             </li>
+            <li><a th:href="@{/hook/export-offline(id=${id})}" title="导出独立运行的agent，无需与服务端通信" th:target="_blank" tabindex="-1">
+                导出离线agent</a>
+            </li>
+
         </ul>
     </li>
 </ul>
@@ -90,17 +94,17 @@
                     <form id="hook_form" action="/hook/add" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon">ClassName</span>
-                            <input type="text" id="className" class="form-control" placeholder="ClassName"
+                            <input type="text" id="className" class="form-control" placeholder="org/apache/catalina/connector/Request"
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon">Method</span>
-                            <input type="text" id="method" class="form-control" placeholder="Method"
+                            <input type="text" id="method" class="form-control" placeholder="getParameter"
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon">Desc</span>
-                            <input type="text" id="desc" class="form-control" placeholder="Desc"
+                            <input type="text" id="desc" class="form-control" placeholder="(Ljava/lang/String;)Ljava/lang/String;"
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">

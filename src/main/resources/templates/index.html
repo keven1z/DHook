@@ -14,7 +14,7 @@
 <include src="header.html" /></include>
 <!-- Bootstrap 的 CSS 文件 -->
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.css">
@@ -188,7 +188,7 @@
                         // align: 'center',
                         // valign: 'middle',
                         formatter: function (value, row, index) {
-                            return "<button class=\"btn btn-primary\" onclick=\"export_agent('" + row.id + "')\" >下载agent</button><a class=\"btn btn-primary\" href='/hook.html?id=" + row.id + "' >详情</a>";
+                            return "<a class=\"btn btn-primary\" href='/hook.html?id=" + row.id + "' >详情</a>";
                         }
                     }
                 ]
@@ -264,10 +264,6 @@
         });
     });
 
-    function export_agent(id) {
-        let url = "/agent/export?id=" + id;
-        window.open(url, '_blank');
-    }
 
 </script>
 </body>
