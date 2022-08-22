@@ -1,6 +1,5 @@
 package com.keven1z.dao;
 
-import com.keven1z.entity.AgentEntity;
 import com.keven1z.entity.HookEntity;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;

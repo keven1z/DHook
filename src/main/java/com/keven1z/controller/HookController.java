@@ -1,6 +1,10 @@
 package com.keven1z.controller;
 
 import com.keven1z.entity.HookEntity;
+import com.keven1z.entity.HookLibraryEntity;
+import com.keven1z.exception.HttpResponseException;
+import com.keven1z.http.ErrorEnum;
+import com.keven1z.service.IHookLibraryService;
 import com.keven1z.service.IHookService;
 import com.keven1z.utils.GsonUtil;
 import com.keven1z.utils.HttpUtil;
@@ -27,9 +31,20 @@ public class HookController {
 
     @Resource
     private IHookService hookService;
+    @Resource
+    private IHookLibraryService hookLibraryService;
 
     @PostMapping("/add")
     public int addHook(@RequestBody HookEntity hookEntity) {
+        String className = hookEntity.getClassName();
+        if (!className.contains("/")){
+            HookLibraryEntity hookLibraryEntity = hookLibraryService.query(className);
+            if (hookLibraryEntity  == null)   throw new HttpResponseException(ErrorEnum.E_40001);
+
+            hookEntity.setClassName(hookLibraryEntity.getClassName());
+            hookEntity.setMethod(hookLibraryEntity.getMethod());
+            hookEntity.setDesc(hookLibraryEntity.getDesc());
+        }
         return hookService.addHook(hookEntity);
     }
     @PostMapping("/update")
@@ -69,11 +84,11 @@ public class HookController {
     /**
      * 导出配置文件
      *
-     * @param id dHook.jar id
+     * @param id agent id
      * @return
      */
-    @GetMapping("/export")
-    public ResponseEntity<String> produce(@RequestParam(value = "id") String id) {
+    @GetMapping("/export-config")
+    public ResponseEntity<String> exportConfig(@RequestParam(value = "id") String id) {
         List<HookEntity> hookEntities = hookService.findHooksByAgentId(id);
         String jsonString = GsonUtil.toJsonString(hookEntities);
         return ResponseEntity.ok()

@@ -88,20 +88,18 @@ function refresh_hook() {
     });
 }
 
-function getIdSelections() {
+function get_hook_id() {
     return $.map($("#tb_departments").bootstrapTable('getSelections'), function (row) {
         return row.id
     })
 }
 
 function del_hook() {
-    let selected = getIdSelections();
-    if (selected.length === 0) {
+    let id = get_hook_id();
+    if (id == null) {
         alert("未选择删除的hook点");
         return;
     }
-
-    let id = selected[0];
     $.ajax({
         url: "/hook/del?hookId=" + id,
         type: "get",

@@ -1,7 +1,9 @@
 package com.keven1z.controller;
 
 import com.keven1z.entity.AgentEntity;
+import com.keven1z.entity.ConfigEntity;
 import com.keven1z.service.IAgentService;
+import com.keven1z.service.IConfigService;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
 import com.keven1z.utils.UUidUtil;
@@ -22,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
- *
  * @author keven1z
  * @date 2021/12/23
  */
@@ -33,58 +34,58 @@ public class AgentController {
 
     @Resource
     private IAgentService agentService;
-
+    @Resource
+    private IConfigService configService;
     /*
      * 查找所有agent
      */
     @GetMapping("/all")
-    public List<AgentEntity> index(){
+    public List<AgentEntity> index() {
         List<AgentEntity> agentEntities = agentService.findAgentAll();
         return agentEntities;
     }
 
     @GetMapping("/update")
-    public int update(@RequestParam(value = "id") String id,String name){
+    public int update(@RequestParam(value = "id") String id, String name) {
         AgentEntity entity = agentService.findAgentById(id);
-        if (entity != null){
+        if (entity != null) {
             entity.setName(name);
             agentService.update(entity);
             return 1;
-        }
-        else {
+        } else {
             return 0;
         }
     }
+
     /*
      * 删除agent
      */
     @GetMapping("/del")
-    public int del(String agentId){
+    public int del(String agentId) {
         return agentService.delete(agentId);
     }
+
     /*
      * 注册agent
      */
     @PostMapping("/register")
-    public int register(@RequestBody AgentEntity agentEntity){
-        logger.info("注册agent:"+agentEntity);
+    public int register(@RequestBody AgentEntity agentEntity) {
+        logger.info("注册agent:" + agentEntity);
         AgentEntity entity = agentService.findAgentById(agentEntity.getId());
-        if (entity != null){
+        if (entity != null) {
             agentEntity.setName(entity.getName());
             return agentService.update(agentEntity);
-        }
-        else {
+        } else {
             return 0;
         }
     }
 
     @PostMapping("/add")
-    public int add(@RequestParam String name){
+    public int add(@RequestParam String name) {
         String uuid = UUidUtil.getUUID();
-        try{
-            agentService.register(uuid,name);
-        }
-        catch (Exception e){
+        try {
+            agentService.register(uuid, name);
+        } catch (Exception e) {
             return 0;
         }
         return 1;
@@ -92,20 +93,22 @@ public class AgentController {
 
     /**
      * 导出agent
-     * @param id dHook.jar1 id
+     *
+     * @param id agent id
      * @return
      */
     @GetMapping("/export")
-    public ResponseEntity<Object> export(@RequestParam(value = "id") String id)  {
+    public ResponseEntity<Object> export(@RequestParam(value = "id") String id) {
         String fileName = "dHook.jar";
         byte[] jar_new;
         try {
-            jar_new = JarUtil.updateConfig(id);
+            List<ConfigEntity> configEntities = configService.query();
+            jar_new = JarUtil.updateConfig(id, configEntities);
         } catch (Exception e) {
-            logger.error("导出agent失败:"+e.getMessage());
+            logger.error("导出agent失败:" + e.getMessage());
             return ResponseEntity.badRequest().body("0");
         }
-        InputStreamResource resource = new InputStreamResource (new ByteArrayInputStream(jar_new));
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(jar_new));
 
         return HttpUtil.responseSource(fileName, resource, jar_new.length);
     }

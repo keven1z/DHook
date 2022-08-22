@@ -19,60 +19,28 @@ import java.io.Serializable;
 public class FieldEntity{
 
     private int fieldId;
+    /**
+     * 参数名
+     */
     @Expose
     private String name;
+    /**
+     * 参数值
+     */
     @Expose
     private Object value;
+    /**
+     * 对应的hook id
+     */
     private int hookId;
+    /**
+     * 执行顺序
+     */
     @Expose
     private int sort;
+    /**
+     * 该参数修改是在方法执行前还是执行后
+     */
     @Expose
     private int type;
-    public int getFieldId() {
-        return fieldId;
-    }
-
-    public void setFieldId(int fieldId) {
-        this.fieldId = fieldId;
-    }
-
-    public int getHookId() {
-        return hookId;
-    }
-
-    public void setHookId(int hookId) {
-        this.hookId = hookId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public int getSort() {
-        return sort;
-    }
-
-    public void setSort(int sort) {
-        this.sort = sort;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
 }

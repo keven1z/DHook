@@ -1,6 +1,7 @@
 package com.keven1z.controller;
 
 
+import com.keven1z.NettyServer;
 import com.keven1z.entity.PluginEntity;
 import com.keven1z.exception.HttpResponseException;
 import com.keven1z.http.ErrorEnum;
@@ -8,6 +9,8 @@ import com.keven1z.service.IPluginService;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +32,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/plugin")
 public class PluginController {
+    private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
+
     @Resource
     private IPluginService pluginService;
 
     @PostMapping("/add")
-    public String addPlugin(@RequestParam("plugin") MultipartFile file, String agentId) throws Exception {
+    public String addPlugin(@RequestParam("plugin") MultipartFile file, String agentId){
         // 设置上传至项目文件夹下的uploadFile文件夹中，没有文件夹则创建
         File dir = new File("plugins");
         if (!dir.exists()) {
@@ -48,15 +53,7 @@ public class PluginController {
             File f = new File(path);
             if (f.exists()) f.delete();
             file.transferTo(f);
-            Object defaultExtender = JarUtil.loadJar("file:" + path);
-            Method getExtensionNameMethod = defaultExtender.getClass().getMethod("getExtensionName");
-            Method getExtensionDescMethod = defaultExtender.getClass().getMethod("getExtensionDesc");
-            String extensionName = getExtensionNameMethod.invoke(defaultExtender).toString();
-            String extensionDesc = getExtensionDescMethod.invoke(defaultExtender).toString();
-
-            PluginEntity pluginEntity = new PluginEntity();
-            pluginEntity.setPluginName(extensionName);
-            pluginEntity.setDesc(extensionDesc);
+            PluginEntity pluginEntity = JarUtil.loadJar("file:" + path);
             pluginEntity.setFileName(file.getOriginalFilename());
             pluginEntity.setAgentId(agentId);
             pluginEntity.setFilePath(path);
@@ -64,6 +61,7 @@ public class PluginController {
         } catch (IOException e) {
             throw new HttpResponseException(ErrorEnum.E_20001);
         } catch (Exception e) {
+            logger.error(e.toString());
             throw new HttpResponseException(ErrorEnum.E_10001);
         }
 
@@ -105,6 +103,7 @@ public class PluginController {
             InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
             return HttpUtil.responseSource(file.getName(), inputStreamResource, file.length());
         } catch (Exception e) {
+            logger.error(e.toString());
             return ResponseEntity.badRequest().body("0");
         }
     }

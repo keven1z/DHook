@@ -5,15 +5,35 @@ package com.keven1z.entity;
  * @date 2022/04/20
  */
 public class PluginEntity {
-    //文件名，主键
+    /**
+     * 文件名，主键
+     */
     private String fileName;
-    //插件名称
+    /**
+     * 插件名称
+     */
     private String pluginName;
-    //文件路径
+    /**
+     * 插件绝对路径
+     */
     private String filePath;
-    //插件描述
+    /**
+     * 插件描述
+     */
     private String desc;
+    /**
+     * 对应的agent
+     */
     private String agentId;
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public String getPluginName() {
         return pluginName;
     }
@@ -36,14 +56,6 @@ public class PluginEntity {
 
     public void setDesc(String desc) {
         this.desc = desc;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public String getAgentId() {

@@ -1,7 +1,6 @@
 package com.keven1z.dao;
 
 import com.keven1z.entity.FieldEntity;
-import com.keven1z.entity.MethodEntity;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
