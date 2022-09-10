@@ -17,7 +17,6 @@ public interface IClassMapDao {
             "(#{item1.className},#{item1.packageName},#{item1.agentId})" +
             "</foreach>" +
             "</script>")
-    @Options(useGeneratedKeys=true, keyProperty="id")
     int insert(@Param(value="classMaps") List<ClassMapEntity> classMaps);
     @Select("select * from class_map where agentId=#{agentId}")
     List<ClassMapEntity> findClassMapAll(String agentId);

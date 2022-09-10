@@ -61,7 +61,7 @@ public class JarUtil {
         return JarLoader.saveToJar(agent, changeNodes);
     }
 
-    public static byte[] updateConfig(String id,List<ConfigEntity> configEntities) throws IOException {
+    public static byte[] updateConfig(String id, List<ConfigEntity> configEntities) throws IOException {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("agent/dHook.jar");
         Resource resource = resources[0];
@@ -83,7 +83,7 @@ public class JarUtil {
                 jos.putNextEntry(jarEntry);
                 Properties properties = new Properties();
                 properties.setProperty("register_id", id);
-                for (ConfigEntity configEntity:configEntities){
+                for (ConfigEntity configEntity : configEntities) {
                     properties.setProperty(configEntity.getName(), configEntity.getValue());
                 }
                 properties.load(in);
@@ -101,7 +101,7 @@ public class JarUtil {
         return byteArrayOutputStream.toByteArray();
     }
 
-    public static byte[] updateHook(String json) throws IOException {
+    public static byte[] updateHook(String json, String plugin_path) throws IOException {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("agent/dHook-offline.jar");
         Resource resource = resources[0];
@@ -119,12 +119,21 @@ public class JarUtil {
             JarEntry jarEntry = entries.nextElement();
             String entryName = jarEntry.getName();
             InputStream in = jf.getInputStream(jarEntry);
-            if (entryName.equals("cn/com/x1001/hook.json")) {
+            if (entryName.equals("com/keven1z/hook.json")) {
                 jarEntry = new JarEntry(entryName);
                 jos.putNextEntry(jarEntry);
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(jos));
                 bufferedWriter.write(json);
                 bufferedWriter.flush();
+            } else if (entryName.equals("com/keven1z/plugin.jar") && plugin_path != null) {
+                FileInputStream fileInputStream = new FileInputStream(plugin_path);
+                jarEntry = new JarEntry(entryName);
+                jos.putNextEntry(jarEntry);
+                byte[] bytes = new byte[1024 * 100];
+                while (fileInputStream.read(bytes) != -1) {
+                    jos.write(bytes);
+                }
+                jos.flush();
             } else {
                 jos.putNextEntry(jarEntry);
                 CommonUtils.inputStreamToOutputStream(in, jos);

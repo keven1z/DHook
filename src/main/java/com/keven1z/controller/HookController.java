@@ -2,10 +2,12 @@ package com.keven1z.controller;
 
 import com.keven1z.entity.HookEntity;
 import com.keven1z.entity.HookLibraryEntity;
+import com.keven1z.entity.PluginEntity;
 import com.keven1z.exception.HttpResponseException;
 import com.keven1z.http.ErrorEnum;
 import com.keven1z.service.IHookLibraryService;
 import com.keven1z.service.IHookService;
+import com.keven1z.service.IPluginService;
 import com.keven1z.utils.GsonUtil;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
@@ -32,14 +34,16 @@ public class HookController {
     @Resource
     private IHookService hookService;
     @Resource
+    private IPluginService pluginService;
+    @Resource
     private IHookLibraryService hookLibraryService;
 
     @PostMapping("/add")
     public int addHook(@RequestBody HookEntity hookEntity) {
         String className = hookEntity.getClassName();
-        if (!className.contains("/")){
+        if (!className.contains("/")) {
             HookLibraryEntity hookLibraryEntity = hookLibraryService.query(className);
-            if (hookLibraryEntity  == null)   throw new HttpResponseException(ErrorEnum.E_40001);
+            if (hookLibraryEntity == null) throw new HttpResponseException(ErrorEnum.E_40001);
 
             hookEntity.setClassName(hookLibraryEntity.getClassName());
             hookEntity.setMethod(hookLibraryEntity.getMethod());
@@ -47,10 +51,12 @@ public class HookController {
         }
         return hookService.addHook(hookEntity);
     }
+
     @PostMapping("/update")
     public int updateHook(@RequestBody HookEntity hookEntity) {
         return hookService.updateHook(hookEntity);
     }
+
     @GetMapping("/all")
     public List<HookEntity> allHook() {
         return hookService.findHookAll();
@@ -66,10 +72,12 @@ public class HookController {
     public List<HookEntity> hook(String id) {
         return hookService.findHooksByAgentId(id);
     }
+
     @GetMapping("/get")
     public HookEntity find(String hookId) {
         return hookService.findHooksByHookId(hookId);
     }
+
     @GetMapping("/delAll")
     public int delAll(String agent_id) {
         return hookService.deleteAll(agent_id);
@@ -97,14 +105,19 @@ public class HookController {
                 .body(jsonString);
     }
 
-    @GetMapping("/export-offline")
-    public ResponseEntity<Object> export(@RequestParam(value = "id") String id) throws FileNotFoundException {
-        String fileName = "dHook.jar";
+    @PostMapping("/export-offline")
+    public ResponseEntity<Object> export(@RequestParam(value = "id") String id, String name, String file_name) {
+        String fileName = name+".jar";
+        PluginEntity entity = pluginService.select(file_name);
+        String plugin_path = null;
+        if (entity != null) {
+            plugin_path = entity.getFilePath();
+        }
         List<HookEntity> hookEntities = hookService.findHooksByAgentId(id);
         String jsonString = GsonUtil.toJsonString(hookEntities);
         byte[] jar_new;
         try {
-            jar_new = JarUtil.updateHook(jsonString);
+            jar_new = JarUtil.updateHook(jsonString, plugin_path);
         } catch (Exception e) {
             logger.error("导出agent失败:" + e.getMessage());
             return ResponseEntity.badRequest().body("0");

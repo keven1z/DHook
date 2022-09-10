@@ -141,3 +141,21 @@ function update_hook(hook_id) {
 
 }
 
+$(document).ready(function () {
+    $("#export-off-button").click(function () {
+        let data = get_all_plugin();
+        $("#plugin_select").empty()
+        for (let datum of data) {
+            let filename = datum.fileName
+
+            $("#plugin_select").append('<option value="' + filename + '">' + filename + '</option>');
+        }
+        $("#export_agent_dialog").modal();
+
+        $('#export_plugin_button').click(function () {
+            $('#export_agent_dialog').modal('hide');
+            $("#agent_form").submit();
+        });
+    });
+});
+

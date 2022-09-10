@@ -6,20 +6,16 @@ import lombok.ToString;
 
 /**
  * @author keven1z
- * @date 2022/01/05
+ * @date 2022/09/06
  */
 @Getter
 @Setter
 @ToString
-public class ClassMapEntity {
-    /**
-     * 类名
-     */
+public class ClassInfoEntity {
     private String className;
-    /**
-     * 包名
-     */
+    private String methods;
+    private String fields;
+    private String superClass;
+    private String interfaces;
     private String packageName;
-    private String agentId;
-
 }

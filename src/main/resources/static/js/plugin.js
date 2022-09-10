@@ -87,7 +87,9 @@ function getFileNameSelections() {
         return row.fileName
     })
 }
-
+function get_all_plugin() {
+    return $('#plugin_departments').bootstrapTable('getData',{useCurrentPage:false,includeHiddenRows:false});
+}
 function unload_plugin() {
     $.ajax({
         url: '/plugin/unload?agentId=' + $("small").text() + '&fileName=' + getFileNameSelections()[0],
