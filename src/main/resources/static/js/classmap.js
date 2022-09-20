@@ -21,13 +21,16 @@ function load_classMap() {
             collapseIcon: 'fas fa-minus',
             expandIcon: 'fas fa-plus'
         }).on('nodeSelected', function (event, data) {
+            $("#classDetail").show();
+            $("#all_class_info").hide();
             $('#class').text("Class " + data["text"]);
             $('#packageName').text(data["href"].substring(1).replaceAll("/", "."));
         });
     })
 }
-function get_class_info(){
-    let url = "/classmap/class/target/add?className="+$('#class').text().replace("Class ","")+"&packageName="+$('#packageName').text()
+
+function get_class_info() {
+    let url = "/classmap/class/target/add?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
     $.ajax({
         //async:false,非异步，modal窗口失效；
         async: true,
@@ -35,13 +38,14 @@ function get_class_info(){
         type: 'GET',
         dataType: 'json',
     }).done(function (data) {
-        if (data === 0){
+        if (data === 0) {
             receive_info();
         }
     })
 }
+
 function receive_info() {
-    let url = "/classmap/class/seek?className="+$('#class').text().replace("Class ","")+"&packageName="+$('#packageName').text()
+    let url = "/classmap/class/seek?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
     $.ajax({
         //async:false,非异步，modal窗口失效；
         async: true,
@@ -49,7 +53,8 @@ function receive_info() {
         type: 'GET',
         dataType: 'json',
     }).done(function (data) {
-        if (data === ""){
+        $("#all_class_info").show();
+        if (data === "") {
             return;
         }
         let super_class = data.superClass
@@ -57,19 +62,26 @@ function receive_info() {
         $("#super_class").text(super_class);
         $("#interfaces").text(interfaces);
         let fields = data.fields;
-        let f = fields.split("#")
-        for (let i=0;i<f.length;i++){
-            _ = f[0].split(" ")
-            let desc = "<td>"+_[0]+"</td><td>"+_[1]+"</td>"
-            $("#field_body").append(desc);
+        if (fields !== "") {
+            let f = fields.split("#")
+            let fieldBody = $("#field_body");
+            fieldBody.empty();
+            for (let i = 0; i < f.length; i++) {
+                let _ = f[i].split(" ");
+                let desc = "<tr><td>" + _[0] + "</td><td>" + _[1] + "</td></tr>"
+                fieldBody.append(desc);
+            }
         }
-        let methods = data.methods;
 
+        let methods = data.methods;
+        if (methods === "") return;
         let m = methods.split("#")
-        for (let i=0;i<f.length;i++){
-            _ = m[0].split(" ")
-            let desc = "<td>"+_[0]+"</td><td>"+_[1]+"</td>"
-            $("#method_body").append(desc);
+        let methodBody = $("#method_body");
+        methodBody.empty();
+        for (let i = 0; i < m.length; i++) {
+            let _ = m[i].split(" ");
+            let desc = "<tr><td>" + _[0] + "</td><td>" + _[1] + "</td></tr>"
+            methodBody.append(desc);
         }
     })
 }

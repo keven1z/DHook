@@ -46,7 +46,8 @@
     <script type="text/javascript" th:src="@{/js/classmap.js}"></script>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
@@ -68,7 +69,7 @@
     <li class="active">
         <a href="#home" data-toggle="tab">Hook</a>
     </li>
-    <li><a href="#div_hook_library" data-toggle="tab" >Hook Library</a></li>
+    <li><a href="#div_hook_library" data-toggle="tab">Hook Library</a></li>
 
     <li><a href="#classmap" data-toggle="tab" onclick="load_classMap()">类图</a></li>
     <li><a href="#plugins-tab" data-toggle="tab">插件</a></li>
@@ -80,7 +81,7 @@
             <li><a th:href="@{/hook/export-config(id=${id})}" title="导出hook信息的json文件" th:target="_blank" tabindex="-1">
                 导出Hook</a>
             </li>
-            <li><a th:href="@{/agent/export(id=${id})}"  th:target="_blank" tabindex="-1">
+            <li><a th:href="@{/agent/export(id=${id})}" th:target="_blank" tabindex="-1">
                 导出在线agent</a>
             </li>
             <li><a title="导出独立运行的agent，无需与服务端通信" id="export-off-button" tabindex="-1">
@@ -103,14 +104,15 @@
                 <form id="agent_form" enctype="multipart/form-data" action="/hook/export-offline" method="POST">
                     <div class="input-group">
                         <span class="input-group-addon">agent文件名</span>
-                        <input type="text"  value="dHook" name="name" class="form-control"
+                        <input type="text" value="dHook" name="name" class="form-control"
                                aria-describedby="basic-addon1">
-                        <input type="hidden"  th:value="${id}" name="id" >
+                        <input type="hidden" th:value="${id}" name="id">
 
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">插件选择</span>
-                        <select class="form-select form-select-lg mb-3" style="width:100%"  name="file_name" aria-label=".form-select-lg example" id="plugin_select">
+                        <select class="form-select form-select-lg mb-3" style="width:100%" name="file_name"
+                                aria-label=".form-select-lg example" id="plugin_select">
                         </select>
 
                     </div>
@@ -140,7 +142,8 @@
                     <form id="hook_form" action="/hook/add" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon" title="输入hook library别名，无需输入method,desc,自动导入别名对应的hook点">ClassName/alias</span>
-                            <input type="text" id="className" class="form-control" placeholder="org/apache/catalina/connector/Request"
+                            <input type="text" id="className" class="form-control"
+                                   placeholder="org/apache/catalina/connector/Request"
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
@@ -150,7 +153,8 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon">Desc</span>
-                            <input type="text" id="desc" class="form-control" placeholder="(Ljava/lang/String;)Ljava/lang/String;"
+                            <input type="text" id="desc" class="form-control"
+                                   placeholder="(Ljava/lang/String;)Ljava/lang/String;"
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
@@ -219,7 +223,7 @@
             <button id="hl_edit" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
             </button>
-            <button id="hl_delete" type="button" class="btn btn-default"  onclick="del_hl()" >
+            <button id="hl_delete" type="button" class="btn btn-default" onclick="del_hl()">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
             </button>
         </div>
@@ -275,49 +279,53 @@
     <!-- classmap start-->
     <div class="tab-pane fade" id="classmap">
 
-        <div class="row" >
+        <div class="row">
             <div class="col-sm-2">
                 <div id="treeview1" style="max-height: 750px" class="treeview pre-scrollable"></div>
             </div>
-            <div class="col-sm-8" id="classDetail">
+            <div class="col-sm-8" id="classDetail" style="display: none">
                 <h5 id="packageName"></h5>
                 <h3 id="class">Class</h3>
 
-                <div><button onclick="get_class_info()">获取类信息</button></div>
                 <div>
-                    <h4><b>Super Class:</b></h4>
-                    <div><span id="super_class">父类</span></div>
+                    <button onclick="get_class_info()">获取类信息</button>
                 </div>
-                <div>
-                    <h4><b>All Implemented Interfaces:</b></h4>
-                    <div><span id="interfaces">接口</span></div>
-                </div>
-                <div id="fields" style="margin-top: 20px">
-                    <h4><b>属性</b></h4>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>类型</th>
-                            <th>属性名</th>
-                        </tr>
-                        </thead>
-                        <tbody id="field_body" style="font-weight: bold;font-size: 14px">
-                        </tbody>
-                    </table>
-                </div>
-                <div id="methods">
-                    <h4><b>方法</b></h4>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>类型</th>
-                            <th>方法</th>
-                        </tr>
-                        </thead>
-                        <tbody id="method_body" style="font-weight: bold;font-size: 14px">
+                <div id="all_class_info" style="display: none">
+                    <div>
+                        <h4><b>Super Class:</b></h4>
+                        <div><span id="super_class">父类</span></div>
+                    </div>
+                    <div>
+                        <h4><b>All Implemented Interfaces:</b></h4>
+                        <div><span id="interfaces">接口</span></div>
+                    </div>
+                    <div id="fields" style="margin-top: 20px">
+                        <h4><b>属性</b></h4>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>类型</th>
+                                <th>属性名</th>
+                            </tr>
+                            </thead>
+                            <tbody id="field_body" style="font-weight: bold;font-size: 14px">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="methods">
+                        <h4><b>方法</b></h4>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>类型</th>
+                                <th>方法</th>
+                            </tr>
+                            </thead>
+                            <tbody id="method_body" style="font-weight: bold;font-size: 14px">
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
