@@ -282,9 +282,43 @@
             <div class="col-sm-8" id="classDetail">
                 <h5 id="packageName"></h5>
                 <h3 id="class">Class</h3>
+
                 <div><button onclick="get_class_info()">获取类信息</button></div>
-                <div id="fields"></div>
-                <div id="methods"></div>
+                <div>
+                    <h4><b>Super Class:</b></h4>
+                    <div><span id="super_class">父类</span></div>
+                </div>
+                <div>
+                    <h4><b>All Implemented Interfaces:</b></h4>
+                    <div><span id="interfaces">接口</span></div>
+                </div>
+                <div id="fields" style="margin-top: 20px">
+                    <h4><b>属性</b></h4>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>类型</th>
+                            <th>属性名</th>
+                        </tr>
+                        </thead>
+                        <tbody id="field_body" style="font-weight: bold;font-size: 14px">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="methods">
+                    <h4><b>方法</b></h4>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>类型</th>
+                            <th>方法</th>
+                        </tr>
+                        </thead>
+                        <tbody id="method_body" style="font-weight: bold;font-size: 14px">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

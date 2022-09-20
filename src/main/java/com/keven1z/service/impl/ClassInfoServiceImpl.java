@@ -4,6 +4,7 @@ import com.keven1z.dao.IClassInfoDao;
 import com.keven1z.entity.ClassInfoEntity;
 import com.keven1z.service.IClassInfoService;
 import org.springframework.stereotype.Service;
+import org.sqlite.SQLiteException;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -23,7 +24,12 @@ public class ClassInfoServiceImpl implements IClassInfoService {
     }
     @Override
     public int addClassName(String className, String packageName){
-        return classInfoDao.insertClass(className,packageName);
+       try{
+           return classInfoDao.insertClass(className,packageName);
+       }
+       catch (Exception e){
+            return 0;
+       }
     }
 
     @Override

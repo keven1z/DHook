@@ -35,13 +35,13 @@ function get_class_info(){
         type: 'GET',
         dataType: 'json',
     }).done(function (data) {
-        if (data === "1"){
-            
+        if (data === 0){
+            receive_info();
         }
     })
 }
 function receive_info() {
-    let url = "/classmap/class/info/seek?className="+$('#class').text().replace("Class ","")+"&packageName="+$('#packageName').text()
+    let url = "/classmap/class/seek?className="+$('#class').text().replace("Class ","")+"&packageName="+$('#packageName').text()
     $.ajax({
         //async:false,非异步，modal窗口失效；
         async: true,
@@ -49,6 +49,27 @@ function receive_info() {
         type: 'GET',
         dataType: 'json',
     }).done(function (data) {
+        if (data === ""){
+            return;
+        }
+        let super_class = data.superClass
+        let interfaces = data.interfaces
+        $("#super_class").text(super_class);
+        $("#interfaces").text(interfaces);
+        let fields = data.fields;
+        let f = fields.split("#")
+        for (let i=0;i<f.length;i++){
+            _ = f[0].split(" ")
+            let desc = "<td>"+_[0]+"</td><td>"+_[1]+"</td>"
+            $("#field_body").append(desc);
+        }
+        let methods = data.methods;
 
+        let m = methods.split("#")
+        for (let i=0;i<f.length;i++){
+            _ = m[0].split(" ")
+            let desc = "<td>"+_[0]+"</td><td>"+_[1]+"</td>"
+            $("#method_body").append(desc);
+        }
     })
 }

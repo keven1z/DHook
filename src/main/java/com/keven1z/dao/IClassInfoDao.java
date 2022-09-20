@@ -14,7 +14,7 @@ public interface IClassInfoDao {
     @Insert("INSERT or replace INTO class_info(class_name,package_name,methods,fields,super_class,interfaces,flag) VALUES(#{className},#{packageName},#{methods},#{fields},#{superClass},#{interfaces},1)")
     int insert(ClassInfoEntity classInfoEntity);
 
-    @Insert("INSERT or replace INTO class_info(class_name,package_name) VALUES(#{className},#{packageName})")
+    @Insert("INSERT  INTO class_info(class_name,package_name) VALUES(#{className},#{packageName})")
     int insertClass(String className,String packageName);
 
     @Result(column = "class_name",property = "className")
