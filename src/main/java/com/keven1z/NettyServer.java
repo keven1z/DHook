@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 /**
@@ -21,12 +23,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class NettyServer {
     private static final Logger  logger = LoggerFactory.getLogger(NettyServer.class);
-
     // 服务端NIO线程组
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     private final EventLoopGroup workGroup = new NioEventLoopGroup();
     public ChannelFuture  start(String host, int port){
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
         ChannelFuture channelFuture = null;
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();

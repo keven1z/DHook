@@ -1,8 +1,10 @@
 
 package com.keven1z.netty;
 
+import com.keven1z.NettyServer;
 import com.keven1z.utils.AgentUtil;
 import com.keven1z.entity.AgentEntity;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -55,16 +57,28 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
         super.userEventTriggered(ctx, evt);
     }
 
+    protected void sendAction(ChannelHandlerContext context,CustomProtocol protocol) {
+        context.writeAndFlush(protocol);
+    }
+
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, CustomProtocol customProtocol) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, CustomProtocol customProtocol)  {
 //        LOGGER.info("收到customProtocol={}", customProtocol);
         //保存客户端与 Channel 之间的关系
         if (NettySocketHolder.getMAP().containsKey(customProtocol.getId())) return;
         NettySocketHolder.put(customProtocol.getId(), (NioSocketChannel) ctx.channel());
+        try{
+            CustomProtocol protocol = HeartbeatInitializer.HeartQueue.take();
+            protocol.setId(customProtocol.getId());
+            sendAction(ctx,protocol);
+        }
+        catch (InterruptedException e){
+
+        }
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
         LOGGER.error(cause.getMessage());
     }
 }

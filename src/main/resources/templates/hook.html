@@ -279,16 +279,24 @@
     <!-- classmap start-->
     <div class="tab-pane fade" id="classmap">
 
+
+
+
         <div class="row">
             <div class="col-sm-2">
                 <div id="treeview1" style="max-height: 750px" class="treeview pre-scrollable"></div>
             </div>
+
             <div class="col-sm-8" id="classDetail" style="display: none">
+
+
+
                 <h5 id="packageName"></h5>
                 <h3 id="class">Class</h3>
 
                 <div>
                     <button onclick="get_class_info()">获取类信息</button>
+                    <button onclick="get_code()">下载源码</button>
                 </div>
                 <div id="all_class_info" style="display: none">
                     <div>
@@ -317,8 +325,8 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>类型</th>
-                                <th>方法</th>
+                                <th>方法名</th>
+                                <th>方法描述</th>
                             </tr>
                             </thead>
                             <tbody id="method_body" style="font-weight: bold;font-size: 14px">
