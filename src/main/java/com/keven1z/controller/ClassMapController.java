@@ -64,11 +64,25 @@ public class ClassMapController {
     }
 
     @PostMapping("/class/code/add")
-    public int addClassInfo(String packageName, String className) {
+    public int addClassCode(String code, String cp) {
+        if (cp != null) {
+            HeartbeatInitializer.CodeMap.put(cp, code);
+        }
+        return 1;
+    }
+
+    @PostMapping("/class/code/get")
+    public int receiveClassCode(String packageName, String className) throws InterruptedException {
         CustomProtocol customProtocol = new CustomProtocol();
         customProtocol.setAction(HeartbeatInitializer.ACTION_GET_CODE);
         customProtocol.setBody(packageName + "." + className);
-        HeartbeatInitializer.HeartQueue.add(customProtocol);
+        if (HeartbeatInitializer.HeartQueue.add(customProtocol)) {
+            Thread.sleep(1000L);
+            String json = HeartbeatInitializer.CodeMap.get(packageName + "." + className);
+            System.out.println(json);
+            return 1;
+        }
+        return 0;
     }
 
 }

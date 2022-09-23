@@ -118,5 +118,15 @@ function receive_info() {
     })
 }
 function get_code(){
+    let url = "/classmap/code/get?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
+    $.ajax({
+        //async:false,非异步，modal窗口失效；
+        async: true,
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+    }).done(function (data) {
 
+
+    })
 }
