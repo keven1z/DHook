@@ -57,28 +57,30 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
         super.userEventTriggered(ctx, evt);
     }
 
-    protected void sendAction(ChannelHandlerContext context,CustomProtocol protocol) {
+    protected void sendAction(ChannelHandlerContext context, CustomProtocol protocol) {
         context.writeAndFlush(protocol);
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, CustomProtocol customProtocol)  {
+    protected void channelRead0(ChannelHandlerContext ctx, CustomProtocol customProtocol) {
 //        LOGGER.info("收到customProtocol={}", customProtocol);
         //保存客户端与 Channel 之间的关系
-        if (NettySocketHolder.getMAP().containsKey(customProtocol.getId())) return;
-        NettySocketHolder.put(customProtocol.getId(), (NioSocketChannel) ctx.channel());
-        try{
-            CustomProtocol protocol = HeartbeatInitializer.HeartQueue.take();
-            protocol.setId(customProtocol.getId());
-            sendAction(ctx,protocol);
+        if (!NettySocketHolder.getMAP().containsKey(customProtocol.getId())) {
+            NettySocketHolder.put(customProtocol.getId(), (NioSocketChannel) ctx.channel());
         }
-        catch (InterruptedException e){
 
+        CustomProtocol protocol = HeartbeatInitializer.HeartQueue.poll();
+        if (protocol == null) {
+            return;
         }
+        LOGGER.info("向服务端" + customProtocol.getId() + "发送命令");
+        protocol.setId(customProtocol.getId());
+        sendAction(ctx, protocol);
+
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.error(cause.getMessage());
     }
 }

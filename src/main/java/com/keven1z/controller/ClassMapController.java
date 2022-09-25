@@ -2,15 +2,22 @@ package com.keven1z.controller;
 
 import com.keven1z.entity.ClassInfoEntity;
 import com.keven1z.entity.ClassMapEntity;
-import com.keven1z.entity.HookEntity;
+import com.keven1z.exception.HttpResponseException;
+import com.keven1z.http.ErrorEnum;
 import com.keven1z.netty.CustomProtocol;
 import com.keven1z.netty.HeartbeatInitializer;
 import com.keven1z.service.IClassInfoService;
 import com.keven1z.service.IClassMapService;
+import com.keven1z.utils.DecompilerUtil;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author keven1z
@@ -64,25 +71,37 @@ public class ClassMapController {
     }
 
     @PostMapping("/class/code/add")
-    public int addClassCode(String code, String cp) {
-        if (cp != null) {
+    public int addClassCode(@RequestBody Map<String, String> map) {
+        String cp = map.get("cp");
+        String code = map.get("code");
+        if (cp != null && code != null) {
             HeartbeatInitializer.CodeMap.put(cp, code);
         }
         return 1;
     }
 
-    @PostMapping("/class/code/get")
-    public int receiveClassCode(String packageName, String className) throws InterruptedException {
+    @GetMapping("/class/code/get")
+    public ResponseEntity<Object> receiveClassCode(String packageName, String className) throws Exception {
         CustomProtocol customProtocol = new CustomProtocol();
         customProtocol.setAction(HeartbeatInitializer.ACTION_GET_CODE);
+        String pc = packageName + "." + className;
         customProtocol.setBody(packageName + "." + className);
-        if (HeartbeatInitializer.HeartQueue.add(customProtocol)) {
-            Thread.sleep(1000L);
-            String json = HeartbeatInitializer.CodeMap.get(packageName + "." + className);
-            System.out.println(json);
-            return 1;
+        if (!HeartbeatInitializer.CodeMap.containsKey(pc)) {
+            HeartbeatInitializer.HeartQueue.add(customProtocol);
+            Thread.sleep(2000L);
         }
-        return 0;
+        String json = HeartbeatInitializer.CodeMap.get(packageName + "." + className);
+        if (json == null) throw new HttpResponseException(ErrorEnum.E_20002);
+        byte[] code = Base64.getDecoder().decode(json);
+        String sourceCode = DecompilerUtil.getDecompilerString(code, pc);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        Arrays.stream(sourceCode.split("\n")).map(DecompilerUtil::matchStringByRegularExpression).forEach(matched -> stringBuilder.append(matched).append("\n"));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment;filename=" + className + ".java")
+                .body(stringBuilder);
     }
 
 }
