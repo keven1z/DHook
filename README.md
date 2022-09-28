@@ -44,6 +44,9 @@ java -jar DHookServer-[release-version].jar
 - [ ] 动态辅助漏洞测试 
 
 ## 更新
+### 2.5 beta1 版本
+* 增加心跳包断线重连
+* 增加类图 类详细信息查看以及源码下载功能
 ### 2.4版本 2022/8/22
 * 增加自定义ip配置功能
 * 增加hook library功能
