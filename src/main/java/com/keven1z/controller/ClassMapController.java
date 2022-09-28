@@ -47,18 +47,33 @@ public class ClassMapController {
         return classMapService.findClassMapAll(agentId);
     }
 
-    @GetMapping("/class/target/add")
-    public int addTarget(String packageName, String className) {
-        return classInfoService.addClassName(className, packageName);
+    @GetMapping("/class/detail/get")
+    public ClassInfoEntity getClassInfo(String packageName, String className) throws InterruptedException {
+        CustomProtocol customProtocol = new CustomProtocol();
+        customProtocol.setAction(HeartbeatInitializer.ACTION_GET_CODE);
+        String pc = packageName + "." + className;
+        customProtocol.setBody(packageName + "." + className);
+        if (!HeartbeatInitializer.ClassMap.contains(pc)) {
+            HeartbeatInitializer.HeartQueue.add(customProtocol);
+            Thread.sleep(2000L);
+        }
+        for (ClassInfoEntity classInfo : HeartbeatInitializer.ClassMap) {
+            if (classInfo.toString().equals(pc)){
+                classInfoService.insert(classInfo);
+                return classInfo;
+            }
+        }
+        throw new HttpResponseException(ErrorEnum.E_30003);
     }
 
-    @GetMapping("/class/seek")
-    public ClassInfoEntity seek(String packageName, String className) {
-        return classInfoService.findClassInfo(className, packageName);
-    }
+//    @GetMapping("/class/seek")
+//    public ClassInfoEntity seek(String packageName, String className) {
+//        return classInfoService.findClassInfo(className, packageName);
+//    }
 
     @GetMapping("/class/get")
     public List<ClassInfoEntity> getNoClassInfo() {
+
         return classInfoService.getClassInfoByFlag(0);
     }
 

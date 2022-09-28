@@ -43,7 +43,7 @@ public class HookController {
         String className = hookEntity.getClassName();
         if (!className.contains("/")) {
             HookLibraryEntity hookLibraryEntity = hookLibraryService.query(className);
-            if (hookLibraryEntity == null) throw new HttpResponseException(ErrorEnum.E_40001);
+            if (hookLibraryEntity == null) throw new HttpResponseException(ErrorEnum.E_30002);
 
             hookEntity.setClassName(hookLibraryEntity.getClassName());
             hookEntity.setMethod(hookLibraryEntity.getMethod());

@@ -50,6 +50,7 @@ function load_classMap() {
             $("#all_class_info").hide();
             $('#class').text("Class " + data["text"]);
             $('#packageName').text(data["href"].substring(1).replaceAll("/", "."));
+            receive_info();
         });
     })
 }
@@ -84,15 +85,16 @@ function receive_info() {
         type: 'GET',
         dataType: 'json',
     }).done(function (data) {
-        $("#all_class_info").show();
         if (data === "") {
             return;
         }
         let super_class = data.superClass
         $(".spinner-border").hide()
         if (super_class == null) {
-            alert("未获取到类信息")
+            // alert("未获取到类信息")
+            return;
         }
+        $("#all_class_info").show();
         let interfaces = data.interfaces
         $("#super_class").text(super_class);
         $("#interfaces").text(interfaces);
