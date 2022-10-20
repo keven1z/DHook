@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{/js/include.js}"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" th:src="@{/js/bootstrap-treeview.min.js}"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+<include src="header.html"></include>
+
+
+<h5><span th:text="${hook.className}"></span>.<span th:text="${hook.method}"></span><span th:text="${hook.desc}"></span>
+</h5>
+<div class="row">
+    <div class="col-sm-2">
+        <div id="scroll_hook_detail" style="max-height: 550px" class="treeview pre-scrollable"></div>
+    </div>
+    <div class="col-sm-8" id="classDetail" style="display: none">
+        <div>
+            <span>参数：</span><span id="param" >参数：</span>
+        </div>
+        <div>
+            <span>当前对象：</span><span id="thisObject" >参数：</span>
+        </div>
+        <div>
+            <span>返回对象：</span><span id="returnObject">参数：</span>
+        </div>
+        <div>
+            <span>调用栈：</span>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script  th:inline="javascript">
+    window.onload= function () {
+        var defaultData = [];
+        var hd_data = [[${hd_data}]]
+        for (var i = 0, l = hd_data.length; i < l; i++) {
+            var date = hd_data[i]["date"]
+            defaultData[i] = {
+                text: date,
+                href: '#' + hd_data[i]["id"],
+                tags: [i]
+            }
+        }
+        $("#scroll_hook_detail").treeview({
+            data: defaultData,
+            collapseIcon: 'fas fa-minus',
+            expandIcon: 'fas fa-plus'
+        }).on('nodeSelected', function (event, data) {
+
+        });
+    }
+
+</script>
+</html>

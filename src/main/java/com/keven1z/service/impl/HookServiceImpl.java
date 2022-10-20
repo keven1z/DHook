@@ -126,6 +126,21 @@ public class HookServiceImpl implements IHookService {
         return delCount;
     }
 
+    @Override
+    public List<HookDetailEntity> findHookDetailByHookId(int hookId) {
+        return hookDao.findHookDetailByHookId(hookId);
+    }
+
+    @Override
+    public List<HookDetailEntity> findHookDetails() {
+        return hookDao.findHookDetails();
+    }
+
+    @Override
+    public int addHookDetail(HookDetailEntity hookDetail) {
+        return hookDao.addHookDetail(hookDetail);
+    }
+
     public boolean isInField(int fieldId,List<FieldEntity> fieldEntityList){
         for (FieldEntity fieldEntity:fieldEntityList){
             int id = fieldEntity.getFieldId();

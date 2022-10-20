@@ -50,7 +50,7 @@ public class ClassMapController {
     @GetMapping("/class/detail/get")
     public ClassInfoEntity getClassInfo(String packageName, String className) throws InterruptedException {
         CustomProtocol customProtocol = new CustomProtocol();
-        customProtocol.setAction(HeartbeatInitializer.ACTION_GET_CODE);
+        customProtocol.setAction(HeartbeatInitializer.ACTION_GET_CLASS);
         String pc = packageName + "." + className;
         customProtocol.setBody(packageName + "." + className);
         if (!HeartbeatInitializer.ClassMap.contains(pc)) {
@@ -66,10 +66,10 @@ public class ClassMapController {
         throw new HttpResponseException(ErrorEnum.E_30003);
     }
 
-//    @GetMapping("/class/seek")
-//    public ClassInfoEntity seek(String packageName, String className) {
-//        return classInfoService.findClassInfo(className, packageName);
-//    }
+    @GetMapping("/class/seek")
+    public ClassInfoEntity seek(String packageName, String className) {
+        return classInfoService.findClassInfo(className, packageName);
+    }
 
     @GetMapping("/class/get")
     public List<ClassInfoEntity> getNoClassInfo() {

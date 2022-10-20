@@ -1,6 +1,7 @@
 package com.keven1z.service;
 
 import com.keven1z.entity.AgentEntity;
+import com.keven1z.entity.HookDetailEntity;
 import com.keven1z.entity.HookEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +21,7 @@ public interface IHookService {
     HookEntity findHooksByHookId(String hookId);
     int deleteHook(int hookId);
     int deleteAll(String agentId);
-
+    List<HookDetailEntity> findHookDetailByHookId(int hookId);
+    List<HookDetailEntity> findHookDetails();
+    int addHookDetail(HookDetailEntity hookDetail);
 }

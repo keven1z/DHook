@@ -1,5 +1,6 @@
 package com.keven1z.dao;
 
+import com.keven1z.entity.HookDetailEntity;
 import com.keven1z.entity.HookEntity;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
@@ -21,6 +22,8 @@ public interface IHookDao {
     })
     HookEntity findHookByHookId(String id);
 
+
+
     @Select("select * from hook")
     @Results(value={
             @Result(id = true,column = "id",property = "id"),
@@ -41,6 +44,7 @@ public interface IHookDao {
             "VALUES (#{className},#{method},#{desc},#{parameters},#{returnValue},#{agentId})"})
     @Options(useGeneratedKeys=true, keyProperty="id")
     int addHook(HookEntity hookEntity);
+
     @Update({"UPDATE Hook set class_name=#{className}, method=#{method}, desc=#{desc}, parameters=#{parameters},return_value=#{returnValue} ",
             "where id=#{id}"})
     int update(HookEntity hookEntity);
@@ -62,4 +66,25 @@ public interface IHookDao {
 
     @Delete("DELETE FROM hook WHERE id = #{id}")
     int delete(int id);
+
+
+    @Select("SELECT * FROM hook_detail WHERE hook_id = #{hookId}")
+    @Results(value={
+            @Result(id = true,column = "id",property = "id"),
+            @Result(column = "hook_id",property = "hookId"),
+    })
+    List<HookDetailEntity> findHookDetailByHookId(int hookId);
+
+    @Select("SELECT * FROM hook_detail")
+    @Results(value={
+            @Result(id = true,column = "id",property = "id"),
+            @Result(column = "hook_id",property = "hookId"),
+    })
+    List<HookDetailEntity> findHookDetails();
+
+    @Insert({"INSERT INTO hook_detail(hook_id, param, returnObject, thisObject,date,stacks) ",
+            "VALUES (#{hookId},#{param},#{returnObject},#{thisObject},#{date},#{stacks})"})
+    @Result(column = "hook_id",property = "hookId")
+    @Options(useGeneratedKeys=true, keyProperty="id")
+    int addHookDetail(HookDetailEntity hookDetail);
 }

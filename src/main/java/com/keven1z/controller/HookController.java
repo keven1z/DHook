@@ -1,5 +1,6 @@
 package com.keven1z.controller;
 
+import com.keven1z.entity.HookDetailEntity;
 import com.keven1z.entity.HookEntity;
 import com.keven1z.entity.HookLibraryEntity;
 import com.keven1z.entity.PluginEntity;
@@ -95,7 +96,7 @@ public class HookController {
      * @param id agent id
      * @return
      */
-    @GetMapping("/export-config")
+    @GetMapping("/export/config")
     public ResponseEntity<String> exportConfig(@RequestParam(value = "id") String id) {
         List<HookEntity> hookEntities = hookService.findHooksByAgentId(id);
         String jsonString = GsonUtil.toJsonString(hookEntities);
@@ -105,7 +106,7 @@ public class HookController {
                 .body(jsonString);
     }
 
-    @PostMapping("/export-offline")
+    @PostMapping("/export/offline")
     public ResponseEntity<Object> export(@RequestParam(value = "id") String id, String name, String file_name) {
         String fileName = name+".jar";
         PluginEntity entity = pluginService.select(file_name);
@@ -124,6 +125,10 @@ public class HookController {
         }
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(jar_new));
         return HttpUtil.responseSource(fileName, resource, jar_new.length);
+    }
+    @PostMapping("/detail/add")
+    public int addHookDetail(@RequestBody HookDetailEntity hookDetailEntity){
+        return hookService.addHookDetail(hookDetailEntity);
     }
 
 }

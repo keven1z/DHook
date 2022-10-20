@@ -6,33 +6,11 @@
     <meta charset="utf-8">
     <title th:text="${applicationName}+'-'+${id}"></title>
     <style>
-        /*.treeview span.indent {*/
-        /*    margin-left: 10px;*/
-        /*    margin-right: 10px*/
-        /*}*/
 
-        /*.treeview span.icon {*/
-        /*    width: 12px;*/
-        /*    margin-right: 5px*/
-        /*}*/
-
-        /*.treeview .node-disabled {*/
-        /*    color: silver;*/
-        /*    cursor: not-allowed*/
-        /*}*/
-
-        /*.node-treeview1:not(.node-disabled):hover {*/
-        /*    background-color: #F5F5F5;*/
-        /*}*/
 
         li {
             cursor: pointer;
         }
-
-        /*.input-group-addon {*/
-        /*    min-width: 100px;*/
-        /*    text-align: center;*/
-        /*}*/
     </style>
 
 
@@ -78,7 +56,7 @@
         <a href="#" id="myTabDrop1" data-toggle="dropdown">功能 <i class="glyphicon glyphicon-th-list icon-th"></i></b>
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-            <li><a th:href="@{/hook/export-config(id=${id})}" title="导出hook信息的json文件" th:target="_blank" tabindex="-1">
+            <li><a th:href="@{/hook/export/config(id=${id})}" title="导出hook信息的json文件" th:target="_blank" tabindex="-1">
                 导出Hook</a>
             </li>
             <li><a th:href="@{/agent/export(id=${id})}" th:target="_blank" tabindex="-1">
@@ -101,7 +79,7 @@
             </div>
 
             <div class="modal-body">
-                <form id="agent_form" enctype="multipart/form-data" action="/hook/export-offline" method="POST">
+                <form id="agent_form" enctype="multipart/form-data" action="/hook/export/offline" method="POST">
                     <div class="input-group">
                         <span class="input-group-addon">agent文件名</span>
                         <input type="text" value="dHook" name="name" class="form-control"
@@ -278,10 +256,6 @@
     </div>
     <!-- classmap start-->
     <div class="tab-pane fade" id="classmap">
-
-
-
-
         <div class="row">
             <div class="col-sm-2">
                 <div id="treeview1" style="max-height: 750px" class="treeview pre-scrollable"></div>

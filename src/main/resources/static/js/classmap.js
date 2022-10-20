@@ -57,7 +57,7 @@ function load_classMap() {
 
 function get_class_info() {
     $(".spinner-border").show();
-    let url = "/classmap/class/target/add?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
+    let url = "/classmap/class/seek/?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
     $.ajax({
         //async:false,非异步，modal窗口失效；
         async: true,
@@ -65,19 +65,17 @@ function get_class_info() {
         type: 'GET',
         dataType: 'json',
     }).done(function (data) {
-        if (data === 0) {
+        if (data === "") {
             receive_info();
         } else {
-            setTimeout(function () {
-                receive_info();
-            }, 2000);
+            set_class_detail(data);
         }
 
     })
 }
 
 function receive_info() {
-    let url = "/classmap/class/seek?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
+    let url = "/classmap/class/get?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
     $.ajax({
         //async:false,非异步，modal窗口失效；
         async: true,
@@ -88,42 +86,44 @@ function receive_info() {
         if (data === "") {
             return;
         }
-        let super_class = data.superClass
-        $(".spinner-border").hide()
-        if (super_class == null) {
-            // alert("未获取到类信息")
-            return;
-        }
-        $("#all_class_info").show();
-        let interfaces = data.interfaces
-        $("#super_class").text(super_class);
-        $("#interfaces").text(interfaces);
-        let fields = data.fields;
-        let fieldBody = $("#field_body");
-        fieldBody.empty();
-        if (fields !== "" && fields != null) {
-            let f = fields.split("#")
-            for (let i = 0; i < f.length; i++) {
-                let _ = f[i].split(" ");
-                let desc = "<tr><td>" + HtmlUtil.htmlEncode(_[0]) + "</td><td>" + HtmlUtil.htmlEncode(_[1]) + "</td></tr>"
-                fieldBody.append(desc);
-            }
-        }
-
-        let methods = data.methods;
-        let methodBody = $("#method_body");
-        methodBody.empty();
-        if (methods === "" || methods == null) return;
-        let m = methods.split("#")
-        for (let i = 0; i < m.length; i++) {
-            let _ = m[i].split(" ");
-            let desc = "<tr><td>" + HtmlUtil.htmlEncode(_[0]) + "</td><td>" + HtmlUtil.htmlEncode(_[1]) + "</td></tr>"
-            methodBody.append(desc);
-        }
+        set_class_detail(data)
 
     })
 }
+function set_class_detail(data){
+    let super_class = data.superClass
+    $(".spinner-border").hide()
+    if (super_class == null) {
+        // alert("未获取到类信息")
+        return;
+    }
+    $("#all_class_info").show();
+    let interfaces = data.interfaces
+    $("#super_class").text(super_class);
+    $("#interfaces").text(interfaces);
+    let fields = data.fields;
+    let fieldBody = $("#field_body");
+    fieldBody.empty();
+    if (fields !== "" && fields != null) {
+        let f = fields.split("#")
+        for (let i = 0; i < f.length; i++) {
+            let _ = f[i].split(" ");
+            let desc = "<tr><td>" + HtmlUtil.htmlEncode(_[0]) + "</td><td>" + HtmlUtil.htmlEncode(_[1]) + "</td></tr>"
+            fieldBody.append(desc);
+        }
+    }
 
+    let methods = data.methods;
+    let methodBody = $("#method_body");
+    methodBody.empty();
+    if (methods === "" || methods == null) return;
+    let m = methods.split("#")
+    for (let i = 0; i < m.length; i++) {
+        let _ = m[i].split(" ");
+        let desc = "<tr><td>" + HtmlUtil.htmlEncode(_[0]) + "</td><td>" + HtmlUtil.htmlEncode(_[1]) + "</td></tr>"
+        methodBody.append(desc);
+    }
+}
 function get_code() {
     $(".spinner-border").show();
     let url = "/classmap/class/code/get?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()

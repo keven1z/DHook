@@ -64,9 +64,13 @@ var TableInit = function () {
                     field: 'desc',
                     title: '描述符'
                 }, {
-                    field: 'returnValue',
-                    title: '返回值',
-                },]
+                    title: '功能',
+                    // align: 'center',
+                    // valign: 'middle',
+                    formatter: function (value, row, index) {
+                        return "<a class=\"btn btn-primary\" href='/hookDetail?id=" + row.id + "' >详情</a>";
+                    }
+                }]
         });
     };
     oTableInit.queryParams = function (params) {
