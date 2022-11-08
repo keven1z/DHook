@@ -132,6 +132,11 @@ public class HookServiceImpl implements IHookService {
     }
 
     @Override
+    public HookDetailEntity findHookDetailById(int id) {
+        return hookDao.findHookDetailById(id);
+    }
+
+    @Override
     public List<HookDetailEntity> findHookDetails() {
         return hookDao.findHookDetails();
     }

@@ -46,6 +46,7 @@ function load_classMap() {
             collapseIcon: 'fas fa-minus',
             expandIcon: 'fas fa-plus'
         }).on('nodeSelected', function (event, data) {
+            $(".spinner-border").hide();
             $("#classDetail").show();
             $("#all_class_info").hide();
             $('#class').text("Class " + data["text"]);
@@ -64,25 +65,32 @@ function get_class_info() {
         url: url,
         type: 'GET',
         dataType: 'json',
-    }).done(function (data) {
-        if (data === "") {
+    }).error(
+        function () {
             receive_info();
-        } else {
-            set_class_detail(data);
-        }
 
+        }
+    )
+        .done(function (data) {
+            set_class_detail(data);
     })
 }
 
 function receive_info() {
-    let url = "/classmap/class/get?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
+    let url = "/classmap/class/detail/get?className=" + $('#class').text().replace("Class ", "") + "&packageName=" + $('#packageName').text()
     $.ajax({
         //async:false,非异步，modal窗口失效；
         async: true,
         url: url,
         type: 'GET',
         dataType: 'json',
-    }).done(function (data) {
+    }).error(
+        function () {
+            $(".spinner-border").hide()
+
+        }
+    )
+        .done(function (data) {
         if (data === "") {
             return;
         }

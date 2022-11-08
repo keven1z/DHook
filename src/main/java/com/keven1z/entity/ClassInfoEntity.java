@@ -77,6 +77,11 @@ public class ClassInfoEntity {
     }
 
     @Override
+    public String toString() {
+        return this.packageName + "." + this.className;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(className, packageName);
     }

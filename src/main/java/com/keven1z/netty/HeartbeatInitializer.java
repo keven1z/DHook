@@ -22,7 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class HeartbeatInitializer extends ChannelInitializer<Channel> {
     public static BlockingQueue<CustomProtocol> HeartQueue = new LinkedBlockingQueue<>(10);
     public static Map<String, String> CodeMap = new ConcurrentHashMap<>();
-    public static Set<ClassInfoEntity> ClassMap = new CopyOnWriteArraySet<>();
+    public static Set<String> ClassMap = new CopyOnWriteArraySet<>();
 
     public final static int ACTION_GET_CODE = 1;
     public final static int ACTION_GET_CLASS = 2;

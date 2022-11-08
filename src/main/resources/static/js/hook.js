@@ -68,7 +68,7 @@ var TableInit = function () {
                     // align: 'center',
                     // valign: 'middle',
                     formatter: function (value, row, index) {
-                        return "<a class=\"btn btn-primary\" href='/hookDetail?id=" + row.id + "' >详情</a>";
+                        return "<a class=\"btn btn-primary\" href='/hookDetail?hookId=" + row.id + "' >详情</a>";
                     }
                 }]
         });
@@ -130,6 +130,7 @@ function update_hook(hook_id) {
             desc: $('#desc').val(),
             method: $('#method').val(),
             returnValue: $('#returnValue').val(),
+            parameters:$('#parameter_pos').val()+","+$('#parameter_value').val(),
             "methodEntities": methodFields.methods,
             "fieldEntities": methodFields.fields
 

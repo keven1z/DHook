@@ -3,6 +3,7 @@ package com.keven1z.controller;
 import com.keven1z.entity.AgentEntity;
 import com.keven1z.entity.ConfigEntity;
 import com.keven1z.service.IAgentService;
+import com.keven1z.service.IClassMapService;
 import com.keven1z.service.IConfigService;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
@@ -36,6 +37,9 @@ public class AgentController {
     private IAgentService agentService;
     @Resource
     private IConfigService configService;
+
+    @Resource
+    private IClassMapService classMapService;
     /*
      * 查找所有agent
      */
@@ -74,6 +78,9 @@ public class AgentController {
         AgentEntity entity = agentService.findAgentById(agentEntity.getId());
         if (entity != null) {
             agentEntity.setName(entity.getName());
+
+            //删除classmap
+            classMapService.delete(agentEntity.getId());
             return agentService.update(agentEntity);
         } else {
             return 0;

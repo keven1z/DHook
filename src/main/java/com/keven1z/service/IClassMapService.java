@@ -13,4 +13,5 @@ import java.util.List;
 public interface IClassMapService {
     public int insert(List<ClassMapEntity> classMap);
     public List<ClassMapEntity> findClassMapAll(String agentId);
+    int delete(String agentId);
 }

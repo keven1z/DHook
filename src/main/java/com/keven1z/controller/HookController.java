@@ -108,7 +108,7 @@ public class HookController {
 
     @PostMapping("/export/offline")
     public ResponseEntity<Object> export(@RequestParam(value = "id") String id, String name, String file_name) {
-        String fileName = name+".jar";
+        String fileName = name + ".jar";
         PluginEntity entity = pluginService.select(file_name);
         String plugin_path = null;
         if (entity != null) {
@@ -126,9 +126,14 @@ public class HookController {
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(jar_new));
         return HttpUtil.responseSource(fileName, resource, jar_new.length);
     }
+
     @PostMapping("/detail/add")
-    public int addHookDetail(@RequestBody HookDetailEntity hookDetailEntity){
+    public int addHookDetail(@RequestBody HookDetailEntity hookDetailEntity) {
         return hookService.addHookDetail(hookDetailEntity);
     }
 
+    @GetMapping("/detail/find")
+    public HookDetailEntity findHook(String id) {
+        return hookService.findHookDetailById(Integer.parseInt(id));
+    }
 }

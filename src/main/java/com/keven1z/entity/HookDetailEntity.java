@@ -21,6 +21,6 @@ public class HookDetailEntity {
     private String returnObject;
     private String thisObject;
     private String stacks;
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy/MM/dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
     private Date date;
 }

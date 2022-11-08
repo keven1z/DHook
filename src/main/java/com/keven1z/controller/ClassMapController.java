@@ -1,5 +1,6 @@
 package com.keven1z.controller;
 
+import com.keven1z.DHookServerApplication;
 import com.keven1z.entity.ClassInfoEntity;
 import com.keven1z.entity.ClassMapEntity;
 import com.keven1z.exception.HttpResponseException;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author keven1z
@@ -55,20 +57,26 @@ public class ClassMapController {
         customProtocol.setBody(packageName + "." + className);
         if (!HeartbeatInitializer.ClassMap.contains(pc)) {
             HeartbeatInitializer.HeartQueue.add(customProtocol);
-            Thread.sleep(2000L);
         }
-        for (ClassInfoEntity classInfo : HeartbeatInitializer.ClassMap) {
-            if (classInfo.toString().equals(pc)){
-                classInfoService.insert(classInfo);
-                return classInfo;
+        int count = 0;
+        while(!HeartbeatInitializer.ClassMap.contains(pc)){
+            Thread.sleep(500);
+            if (count > 15){
+                throw new HttpResponseException(ErrorEnum.E_50001);
             }
+            count ++;
         }
-        throw new HttpResponseException(ErrorEnum.E_30003);
+        ClassInfoEntity classInfoEntity = classInfoService.findClassInfo(className, packageName);
+        if (classInfoEntity == null) throw new HttpResponseException(ErrorEnum.E_40001);
+        return classInfoEntity;
+
     }
 
     @GetMapping("/class/seek")
     public ClassInfoEntity seek(String packageName, String className) {
-        return classInfoService.findClassInfo(className, packageName);
+        ClassInfoEntity classInfo = classInfoService.findClassInfo(className, packageName);
+        if (classInfo == null) throw new HttpResponseException(ErrorEnum.E_30001);
+        return classInfo;
     }
 
     @GetMapping("/class/get")
@@ -80,7 +88,11 @@ public class ClassMapController {
     @PostMapping("/class/info/add")
     public int addClassInfo(@RequestBody List<ClassInfoEntity> classInfoEntities) {
         for (ClassInfoEntity classInfo : classInfoEntities) {
-            classInfoService.insert(classInfo);
+            if (classInfo != null){
+                classInfoService.insert(classInfo);
+                HeartbeatInitializer.ClassMap.add(classInfo.getPackageName()+"."+classInfo.getClassName());
+            }
+
         }
         return classInfoEntities.size();
     }

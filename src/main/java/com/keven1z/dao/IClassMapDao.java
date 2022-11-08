@@ -20,4 +20,6 @@ public interface IClassMapDao {
     int insert(@Param(value="classMaps") List<ClassMapEntity> classMaps);
     @Select("select * from class_map where agentId=#{agentId}")
     List<ClassMapEntity> findClassMapAll(String agentId);
+    @Delete("delete from class_map where agentId=#{agentId}")
+    int delete(String agentId);
 }

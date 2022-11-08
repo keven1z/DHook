@@ -26,4 +26,9 @@ public class ClassMapServiceImpl implements IClassMapService {
     public List<ClassMapEntity> findClassMapAll(String agentId) {
         return classMapDao.findClassMapAll(agentId);
     }
+
+    @Override
+    public int delete(String agentId) {
+        return classMapDao.delete(agentId);
+    }
 }

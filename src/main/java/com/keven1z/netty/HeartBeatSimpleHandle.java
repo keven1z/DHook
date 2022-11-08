@@ -73,7 +73,7 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
         if (protocol == null) {
             return;
         }
-        LOGGER.info("向服务端" + customProtocol.getId() + "发送命令");
+//        LOGGER.info("向服务端" + customProtocol.getId() + "发送命令");
         protocol.setId(customProtocol.getId());
         sendAction(ctx, protocol);
 

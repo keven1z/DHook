@@ -22,6 +22,7 @@ public interface IHookService {
     int deleteHook(int hookId);
     int deleteAll(String agentId);
     List<HookDetailEntity> findHookDetailByHookId(int hookId);
+    HookDetailEntity findHookDetailById(int id);
     List<HookDetailEntity> findHookDetails();
     int addHookDetail(HookDetailEntity hookDetail);
 }

@@ -68,14 +68,14 @@ public interface IHookDao {
     int delete(int id);
 
 
-    @Select("SELECT * FROM hook_detail WHERE hook_id = #{hookId}")
+    @Select("SELECT * FROM hook_detail WHERE hook_id = #{hookId} order by date desc")
     @Results(value={
             @Result(id = true,column = "id",property = "id"),
             @Result(column = "hook_id",property = "hookId"),
     })
     List<HookDetailEntity> findHookDetailByHookId(int hookId);
 
-    @Select("SELECT * FROM hook_detail")
+    @Select("SELECT * FROM hook_detail order by date desc")
     @Results(value={
             @Result(id = true,column = "id",property = "id"),
             @Result(column = "hook_id",property = "hookId"),
@@ -87,4 +87,11 @@ public interface IHookDao {
     @Result(column = "hook_id",property = "hookId")
     @Options(useGeneratedKeys=true, keyProperty="id")
     int addHookDetail(HookDetailEntity hookDetail);
+
+    @Select("SELECT * FROM hook_detail WHERE id = #{id} order by date desc")
+    @Results(value={
+            @Result(id = true,column = "id",property = "id"),
+            @Result(column = "hook_id",property = "hookId"),
+    })
+    HookDetailEntity findHookDetailById(int id);
 }

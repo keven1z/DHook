@@ -7,7 +7,6 @@
     <title th:text="${applicationName}+'-'+${id}"></title>
     <style>
 
-
         li {
             cursor: pointer;
         }
@@ -138,6 +137,13 @@
                         <div class="input-group">
                             <span class="input-group-addon">修改返回值</span>
                             <input type="text" id="returnValue" class="form-control" placeholder="value"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">修改入参</span>
+                            <input type="text" id="parameter_pos" class="form-control" placeholder="参数位置"
+                                   aria-describedby="basic-addon1">
+                            <input type="text" id="parameter_value" class="form-control" placeholder="参数值"
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
@@ -680,6 +686,7 @@
                         desc: $('#desc').val(),
                         method: $('#method').val(),
                         returnValue: $('#returnValue').val(),
+                        parameters:$('#parameter_pos').val()+","+$('#parameter_value').val(),
                         "methodEntities": mf.methods,
                         "fieldEntities": mf.fields
                     }),
@@ -724,10 +731,18 @@
                 let method = data.method;
                 let desc = data.desc;
                 let value = data.returnValue;
+                let parameters = data.parameters;
+                if (parameters !== null && parameters.indexOf(",") >0){
+                    let pos = parameters.split(",")[0]
+                    let value = parameters.split(",")[1]
+                    $("#parameter_pos").val(pos);
+                    $("#parameter_value").val(value);
+                }
                 $("#className").val(className);
                 $("#method").val(method);
                 $("#desc").val(desc);
                 $("#returnValue").val(value);
+
                 let mf = sort_action(data.methodEntities, data.fieldEntities)
                 for (let enterElement of mf.enter) {
                     if (enterElement instanceof Method) {

@@ -48,10 +48,16 @@ public class ViewController {
 
     @GetMapping("/hookDetail")
     public String hookDetail(HttpServletRequest request, String hookId) {
+        if(hookId == null){
+            throw new HttpResponseException(ErrorEnum.E_40001);
+        }
+
         HookEntity hookEntity = hookService.findHookById(hookId);
         List<HookDetailEntity> detailEntities = hookService.findHookDetailByHookId(Integer.parseInt(hookId));
         request.setAttribute("hookId", hookId);
+        hookEntity.setClassName(hookEntity.getClassName().replaceAll("/","."));
         request.setAttribute("hook", hookEntity);
+
         request.setAttribute("hd_data",detailEntities);
         return "hook_detail";
     }
