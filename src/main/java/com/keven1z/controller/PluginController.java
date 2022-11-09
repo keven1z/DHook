@@ -62,7 +62,7 @@ public class PluginController {
             throw new HttpResponseException(ErrorEnum.E_20001);
         } catch (Exception e) {
             logger.error(e.toString());
-            throw new HttpResponseException(ErrorEnum.E_10001);
+            throw  new HttpResponseException(ErrorEnum.E_10001);
         }
 
         return "1";
