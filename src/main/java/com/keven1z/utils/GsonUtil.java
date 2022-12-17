@@ -12,7 +12,6 @@ import static java.lang.reflect.Modifier.TRANSIENT;
  */
 public class GsonUtil {
     private static Gson gson = new GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
             .excludeFieldsWithModifiers(TRANSIENT).create();
 
 

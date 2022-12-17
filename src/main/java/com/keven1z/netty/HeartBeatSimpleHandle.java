@@ -4,6 +4,7 @@ package com.keven1z.netty;
 import com.keven1z.NettyServer;
 import com.keven1z.utils.AgentUtil;
 import com.keven1z.entity.AgentEntity;
+import com.keven1z.utils.GsonUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -67,6 +68,9 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
         //保存客户端与 Channel 之间的关系
         if (!NettySocketHolder.getMAP().containsKey(customProtocol.getId())) {
             NettySocketHolder.put(customProtocol.getId(), (NioSocketChannel) ctx.channel());
+            String body = customProtocol.getBody();
+            AgentEntity agentEntity = GsonUtil.toBean(body, AgentEntity.class);
+            AgentUtil.register(agentEntity);
         }
 
         CustomProtocol protocol = HeartbeatInitializer.HeartQueue.poll();

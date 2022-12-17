@@ -26,4 +26,7 @@ public class AgentUtil {
     public static void update(String id, int state, String time) {
         agentUtil.agentService.updateState(id, state, time);
     }
+    public static void register(AgentEntity agentEntity) {
+        agentUtil.agentService.register(agentEntity);
+    }
 }

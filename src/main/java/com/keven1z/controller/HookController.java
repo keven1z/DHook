@@ -12,6 +12,8 @@ import com.keven1z.service.IPluginService;
 import com.keven1z.utils.GsonUtil;
 import com.keven1z.utils.HttpUtil;
 import com.keven1z.utils.JarUtil;
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -135,5 +137,46 @@ public class HookController {
     @GetMapping("/detail/find")
     public HookDetailEntity findHook(String id) {
         return hookService.findHookDetailById(Integer.parseInt(id));
+    }
+    @GetMapping("/attach")
+    public HookDetailEntity attach(String process) {
+        return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        inject("cn.com.tcsec.goat.taint.TaintApplication","C:\\Users\\fbi\\Documents\\javaProject\\DHook\\src\\main\\resources\\agent\\dHook.jar");
+    }
+    private static boolean inject(String process,String agentPath) throws Exception {
+        List<VirtualMachineDescriptor> vmList = VirtualMachine.list();
+        if (vmList.size() <= 0)
+            return false;
+        if (!process.equals("")){
+            for (VirtualMachineDescriptor vmd : vmList) {
+                String displayName = vmd.displayName();
+                if (displayName.equals(process)){
+                    return inject(vmd,agentPath);
+                }
+            }
+        }
+
+        for (VirtualMachineDescriptor vmd : vmList) {
+            String displayName = vmd.displayName();
+            if (displayName.contains("weblogic.Server") || displayName.contains("catalina")) {
+                return inject(vmd,agentPath);
+            }
+        }
+        return false;
+    }
+    private static boolean inject(VirtualMachineDescriptor vmd,String agentPath) throws Exception {
+        VirtualMachine vm = VirtualMachine.attach(vmd);
+        System.out.println("[+] 注入进程:" + vmd.displayName());
+        Thread.sleep(1000);
+        if (null != vm) {
+            vm.loadAgent(agentPath);
+            System.out.println("[+] dHook注入成功.");
+            vm.detach();
+            return true;
+        }
+        return false;
     }
 }

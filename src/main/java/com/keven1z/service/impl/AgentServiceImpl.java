@@ -29,9 +29,14 @@ public class AgentServiceImpl implements IAgentService {
 
     @Override
     public void register(AgentEntity agentEntity) {
-        agentDao.insert(agentEntity);
+        agentDao.update(agentEntity);
     }
 
+    /**
+     * 添加应用
+     * @param id 应用id
+     * @param name 应用名
+     */
     @Override
     public void register(String id, String name) {
         AgentEntity entity = new AgentEntity();

@@ -18,7 +18,7 @@ public interface IAgentDao {
             "VALUES (#{id},#{name},#{state},#{time},#{javaVersion},#{os})"})
     void insert(AgentEntity agentEntity);
 
-    @Update({ "update agent set name=#{name},time = #{time},state = #{state},javaVersion=#{javaVersion},os=#{os},bind_process_name=#{bindProcessName} where id = #{id}" })
+    @Update({ "update agent set time = #{time},state = #{state},javaVersion=#{javaVersion},os=#{os},bind_process_name=#{bindProcessName} where id = #{id}" })
     int update(AgentEntity agentEntity);
     @Update({ "update agent set time = #{time},state = #{state} where id = #{id}" })
     int updateState(String  id,int state,String time);
