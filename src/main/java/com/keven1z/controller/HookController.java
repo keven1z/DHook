@@ -143,9 +143,7 @@ public class HookController {
         return null;
     }
 
-    public static void main(String[] args) throws Exception {
-        inject("cn.com.tcsec.goat.taint.TaintApplication","C:\\Users\\fbi\\Documents\\javaProject\\DHook\\src\\main\\resources\\agent\\dHook.jar");
-    }
+
     private static boolean inject(String process,String agentPath) throws Exception {
         List<VirtualMachineDescriptor> vmList = VirtualMachine.list();
         if (vmList.size() <= 0)

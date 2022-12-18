@@ -1,27 +1,40 @@
 <div align="center">
 
-# DHook ![2.4 (shields.io)](https://img.shields.io/badge/2.4-brightgreen.svg)
+# DHook ![2.5beta1 (shields.io)](https://img.shields.io/badge/2.5beta1-brightgreen.svg)
 
 [![java version](https://img.shields.io/badge/java-%3e%3D%208-brightgreen)](https://www.oracle.com/tw/java/technologies/javase/javase8-archive-downloads.html)
+[![ASM](https://img.shields.io/badge/ASM-%3d9.2-brightgreen)](https://www.oracle.com/tw/java/technologies/javase/javase8-archive-downloads.html)
 
 </div>
 <p align="center">
-交互式自定义动态hook的工具。通过配置文件，界面操作，插件化等方式对java应用进行动态修改，可用于检测安全漏洞，破解java程序等。
+DHook是一个支持动态debug，动态修改java web应用类的参数，返回值等的web应用.
 </p>
 
-## 快速开始
-### 拉取项目
-`git clone https://github.com/keven1z/DHook.git`
-
-### 构建Jar包
-运行`mvn clean package`
-
-### 本地运行
+## 部署
+1. `git clone https://github.com/keven1z/DHook.git` ，根目录运行`mvn clean package`或者直接下载release包
+2. 本地运行
 ```shell
 java -jar DHookServer-[release-version].jar
-# 在浏览器中打开 localhost:8001
-# 本地心跳端口7070
+# http 端口:8001
+# websocket 端口:7070
 ```
+
+## 快速开始
+### 创建应用
+点击新建，创建一个应用，用于测试待hook的web应用
+![image-20220223105550651](./img/createapp.png)
+### 下载agent
+下载agent，用于对应用进行hook
+![download_agent.png](./img/download_agent.png)
+
+### 部署agent
+在待测试应用运行时加入`-javaagent:{path}/dHook.jar`运行参数。
+
+### 添加hook点
+点击添加hook点，输入待hook的classname和method，即可进行hook
+
+### 查看hook点信息
+点击hook点详情，即可查看hook点入参，返回值以及调用栈信息。
 
 ### 案例
 
@@ -32,7 +45,7 @@ java -jar DHookServer-[release-version].jar
 我们在方法执行前加入对应的参数和对应破解的值，并执行`common/SleevedResource.Setup`静态方法，最后加入`return`，使`<init>`方法执行返回。
 <!--静态方法中classname填写为return，默认将该方法返回，若返回不为空，则将返回值填入参数即可正常返回-->
 
-![image-20220223105550651](https://typora-1253484559.cos.ap-shanghai.myqcloud.com/img/image-20220223105550651.png)
+![image-20220223105550651](./img/cs4.4.png)
 
 ## 文档
 * [插件编写](doc/plugin.md)
@@ -44,9 +57,11 @@ java -jar DHookServer-[release-version].jar
 - [ ] 动态辅助漏洞测试 
 
 ## 更新
-### 2.5 beta1 版本
+### 2.5 beta1 版本 2022/12/18
 * 增加心跳包断线重连
 * 增加类图 类详细信息查看以及源码下载功能
+* 增加hook点调用参数，调用栈等信息展示
+
 ### 2.4版本 2022/8/22
 * 增加自定义ip配置功能
 * 增加hook library功能

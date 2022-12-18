@@ -21,6 +21,11 @@ public interface IHookService {
     HookEntity findHooksByHookId(String hookId);
     int deleteHook(int hookId);
     int deleteAll(String agentId);
+
+    /**
+     * 获取所有hook点详情的调用记录
+     * @param hookId hook id
+     */
     List<HookDetailEntity> findHookDetailByHookId(int hookId);
     HookDetailEntity findHookDetailById(int id);
     List<HookDetailEntity> findHookDetails();

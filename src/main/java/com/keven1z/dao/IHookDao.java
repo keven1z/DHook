@@ -68,7 +68,12 @@ public interface IHookDao {
     int delete(int id);
 
 
-    @Select("SELECT * FROM hook_detail WHERE hook_id = #{hookId} order by date desc")
+    /**
+     * 通过hook id获取所有hook详情的调用记录，限制30
+     * @param hookId hook的id
+     * @return 所有hook详情的调用记录，限制30
+     */
+    @Select("SELECT * FROM hook_detail WHERE hook_id = #{hookId} order by date desc limit 30")
     @Results(value={
             @Result(id = true,column = "id",property = "id"),
             @Result(column = "hook_id",property = "hookId"),
@@ -88,7 +93,7 @@ public interface IHookDao {
     @Options(useGeneratedKeys=true, keyProperty="id")
     int addHookDetail(HookDetailEntity hookDetail);
 
-    @Select("SELECT * FROM hook_detail WHERE id = #{id} order by date desc")
+    @Select("SELECT * FROM hook_detail WHERE id = #{id} order by date desc ")
     @Results(value={
             @Result(id = true,column = "id",property = "id"),
             @Result(column = "hook_id",property = "hookId"),
