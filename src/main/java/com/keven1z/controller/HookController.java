@@ -130,8 +130,8 @@ public class HookController {
     }
 
     @PostMapping("/detail/add")
-    public int addHookDetail(@RequestBody HookDetailEntity hookDetailEntity) {
-        return hookService.addHookDetail(hookDetailEntity);
+    public int addHookDetail(@RequestBody List<HookDetailEntity> hookDetailEntity) {
+        return hookService.addHookDetails(hookDetailEntity);
     }
 
     @GetMapping("/detail/find")
@@ -177,4 +177,8 @@ public class HookController {
         }
         return false;
     }
+
+//    public static void main(String[] args) throws Exception {
+//        inject("cn.com.tcsec.goat.taint.TaintApplication","C:\\Users\\fbi\\Desktop\\gitProject\\DHookAgent\\target\\dHook.jar");
+//    }
 }

@@ -66,6 +66,7 @@ public class AgentController {
      */
     @GetMapping("/del")
     public int del(String agentId) {
+        classMapService.delete(agentId);
         return agentService.delete(agentId);
     }
 

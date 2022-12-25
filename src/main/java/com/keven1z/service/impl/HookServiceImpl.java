@@ -145,6 +145,10 @@ public class HookServiceImpl implements IHookService {
     public int addHookDetail(HookDetailEntity hookDetail) {
         return hookDao.addHookDetail(hookDetail);
     }
+    @Override
+    public int addHookDetails(List<HookDetailEntity> hookDetails) {
+        return hookDao.addDetails(hookDetails);
+    }
 
     public boolean isInField(int fieldId,List<FieldEntity> fieldEntityList){
         for (FieldEntity fieldEntity:fieldEntityList){

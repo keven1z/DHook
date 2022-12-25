@@ -70,7 +70,11 @@ public class HeartBeatSimpleHandle extends SimpleChannelInboundHandler<CustomPro
             NettySocketHolder.put(customProtocol.getId(), (NioSocketChannel) ctx.channel());
             String body = customProtocol.getBody();
             AgentEntity agentEntity = GsonUtil.toBean(body, AgentEntity.class);
-            AgentUtil.register(agentEntity);
+            try {
+                AgentUtil.register(agentEntity);
+            } catch (Exception e) {
+                LOGGER.error("Register agent failed!reason:" + e.getMessage());
+            }
         }
 
         CustomProtocol protocol = HeartbeatInitializer.HeartQueue.poll();

@@ -30,4 +30,5 @@ public interface IHookService {
     HookDetailEntity findHookDetailById(int id);
     List<HookDetailEntity> findHookDetails();
     int addHookDetail(HookDetailEntity hookDetail);
+    int addHookDetails(List<HookDetailEntity> hookDetails);
 }

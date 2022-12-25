@@ -2,6 +2,7 @@ package com.keven1z.utils;
 
 import com.keven1z.entity.AgentEntity;
 import com.keven1z.service.IAgentService;
+import com.keven1z.service.IClassMapService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,8 @@ import javax.annotation.Resource;
 public class AgentUtil {
     @Resource
     private IAgentService agentService;
+    @Resource
+    private IClassMapService classMapService;
 
     public static AgentUtil agentUtil;
 
@@ -28,5 +31,6 @@ public class AgentUtil {
     }
     public static void register(AgentEntity agentEntity) {
         agentUtil.agentService.register(agentEntity);
+        agentUtil.classMapService.delete(agentEntity.getId());
     }
 }

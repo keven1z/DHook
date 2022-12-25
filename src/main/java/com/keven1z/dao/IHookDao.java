@@ -1,5 +1,6 @@
 package com.keven1z.dao;
 
+import com.keven1z.entity.ClassMapEntity;
 import com.keven1z.entity.HookDetailEntity;
 import com.keven1z.entity.HookEntity;
 import org.apache.ibatis.annotations.*;
@@ -92,6 +93,16 @@ public interface IHookDao {
     @Result(column = "hook_id",property = "hookId")
     @Options(useGeneratedKeys=true, keyProperty="id")
     int addHookDetail(HookDetailEntity hookDetail);
+
+    @Insert("<script>"  +
+            "INSERT or ignore INTO hook_detail(hook_id, param, returnObject, thisObject,date,stacks) VALUES" +
+            "<foreach collection=\"hookDetailEntities\" item=\"item1\" index=\"index\"  separator=\",\">" +
+            "(#{item1.hookId},#{item1.param},#{item1.returnObject},#{item1.thisObject},#{item1.date},#{item1.stacks})" +
+            "</foreach>" +
+            "</script>")
+    @Result(column = "hook_id",property = "hookId")
+    @Options(useGeneratedKeys=true, keyProperty="id")
+    int addDetails(@Param(value="hookDetailEntities") List<HookDetailEntity> hookDetailEntities);
 
     @Select("SELECT * FROM hook_detail WHERE id = #{id} order by date desc ")
     @Results(value={
