@@ -15,7 +15,7 @@ DHook是一个支持动态debug，动态修改java web应用类的参数，返�
 2. 本地运行
 ```shell
 java -jar DHookServer-[release-version].jar
-# http 端口:8001
+# http 端口:8081
 # websocket 端口:7070
 ```
 
